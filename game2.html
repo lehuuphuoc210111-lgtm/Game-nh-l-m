@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ai Là Triệu Phú - Giao Diện Chuẩn</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle, #0c1033 0%, #05071a 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .game-container {
+            display: flex;
+            width: 98%;
+            max-width: 1250px;
+            height: 650px;
+            background: #090e2e;
+            border: 3px solid #4a6fa5;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .main-game {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 25px;
+            position: relative;
+        }
+        .money-sidebar {
+            flex: 1;
+            background: #060a22;
+            border-left: 3px solid #1e3a60;
+            display: flex;
+            flex-direction: column-reverse;
+            justify-content: space-around;
+            padding: 10px 20px;
+        }
+        .milestone {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #4a6fa5;
+            font-size: 0.9rem;
+        }
+        .milestone.active {
+            background: linear-gradient(90deg, #e69512 0%, #f9c846 100%);
+            color: black;
+        }
+        .milestone.important {
+            color: #00d2ff;
+        }
+        
+        /* THANH ĐIỀU HƯỚNG TRÊN CÙNG TRỰC QUAN */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .timer-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #ff9900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #ff9900;
+        }
+        .helps {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* THIẾT KẾ NÚT TRÒN LỒNG BIỂU TƯỢNG + CHỮ NHƯ HÌNH MẪU */
+        .help-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid #5869a2;
+            background: rgba(15, 23, 70, 0.6);
+            color: #a4b3d6;
+            font-weight: bold;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.1;
+        }
+        .help-btn span {
+            font-size: 0.85rem;
+            margin-top: 1px;
+        }
+        .help-btn:hover:not(:disabled) {
+            border-color: #00d2ff;
+            color: #00d2ff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+        }
+        .help-btn:disabled {
+            border-color: #222 !important;
+            color: #444 !important;
+            background: #060814 !important;
+            text-decoration: line-through;
+            cursor: not-allowed;
+        }
+        .stop-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid #ff3333;
+            background: rgba(40, 10, 10, 0.6);
+            color: #ff8888;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .stop-btn:hover {
+            box-shadow: 0 0 10px #ff3333;
+        }
+
+        /* KHU VỰC HIỂN THỊ KẾT QUẢ TRỢ GIÚP GIỮA MÀN HÌNH */
+        .help-display-zone {
+            width: 85%;
+            height: 130px;
+            margin: 10px auto;
+            background: rgba(5, 8, 32, 0.7);
+            border: 1px dashed #1e3a60;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            text-align: center;
+        }
+        .help-text-output {
+            font-size: 1.1rem;
+            color: #00ffcc;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* BIỂU ĐỒ CỘT KHÁN GIẢ MINI */
+        .chart-container {
+            display: flex;
+            gap: 25px;
+            align-items: flex-end;
+            height: 100%;
+        }
+        .chart-bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+        .chart-bar {
+            width: 30px;
+            background: linear-gradient(to top, #0055ff, #00d2ff);
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            transition: height 0.5s ease;
+        }
+
+        /* KHUNG CÂU HỎI VÀ ĐÁP ÁN */
+        .question-box {
+            background: rgba(10, 16, 54, 0.8);
+            border: 2px solid #4a6fa5;
+            padding: 20px 40px;
+            border-radius: 40px;
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        .answers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .answer-btn {
+            background: rgba(10, 16, 54, 0.8);
+            border: 1px solid #4a6fa5;
+            padding: 15px 30px;
+            border-radius: 40px;
+            color: white;
+            font-size: 1.05rem;
+            text-align: left;
+            cursor: pointer;
+        }
+        .answer-btn:hover:not(:disabled) {
+            background: #162465;
+            border-color: #fff;
+        }
+        .answer-btn.selected {
+            background: #e69512 !important;
+            color: black !important;
+        }
+        .answer-btn.correct {
+            background: #00cc55 !important;
+            color: black !important;
+            font-weight: bold;
+        }
+        .answer-btn.wrong {
+            background: #cc2222 !important;
+            color: white !important;
+        }
+
+        /* MODAL KHỞI ĐỘNG */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #040616;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #0e143c;
+            border: 2px solid #ffcc00;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .start-btn {
+            background: #ff9900;
+            color: black;
+            border: none;
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="start-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="color:#ffcc00; margin-bottom:20px;">AI LÀ TRIỆU PHÚ</h2>
+            <button id="btn-start" class="start-btn">BẮT ĐẦU CHƠI</button>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="main-game">
+            <div class="top-bar">
+                <div id="timer" class="timer-box">30</div>
+                
+                <div class="helps">
+                    <button id="help-50" class="help-btn" onclick="use5050()">50:50</button>
+                    <button id="help-audience" class="help-btn" onclick="useAudience()">👥<span>KH</span></button>
+                    <button id="help-phone" class="help-btn" onclick="usePhone()">📞<span>NT</span></button>
+                    <button id="help-team" class="help-btn" onclick="useTeam()">🧠<span>TV</span></button>
+                    <button id="btn-stop" class="stop-btn" onclick="stopGame()">🛑</button>
+                </div>
+            </div>
+
+            <div class="help-display-zone">
+                <div id="help-output" class="help-text-output">Hệ thống trợ giúp đã sẵn sàng.</div>
+            </div>
+
+            <div>
+                <div id="question" class="question-box">Đang tải câu hỏi...</div>
+                <div class="answers-grid">
+                    <button id="ans-0" class="answer-btn" onclick="selectAnswer(0)">A. </button>
+                    <button id="ans-1" class="answer-btn" onclick="selectAnswer(1)">B. </button>
+                    <button id="ans-2" class="answer-btn" onclick="selectAnswer(2)">C. </button>
+                    <button id="ans-3" class="answer-btn" onclick="selectAnswer(3)">D. </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="sidebar" class="money-sidebar"></div>
+    </div>
+
+    <script>
+        const questionBank = {
+            easy: [
+                { id: "e1", q: "Bộ môn thể thao nào được mệnh danh là môn thể thao vua?", a: ["Bóng đá", "Cầu lông", "Bóng rổ", "Bóng chuyền"], c: 0 },
+                { id: "e2", q: "Trong môn Cờ vua, quân cờ nào chỉ có thể đi chéo?", a: ["Tượng", "Xe", "Mã", "Hậu"], c: 0 }
+                // >>> DÁN CÁC CÂU HỎI EASY KHÁC VÀO ĐÂY
+            ],
+            medium: [
+                { id: "m34", q: "Tỉnh nào sau đây của Việt Nam nổi tiếng với đặc sản Gà nướng Bản Đôn?", a: ["Đắk Lắk", "Gia Lai", "Lâm Đồng", "Kon Tum"], c: 0 }
+                // >>> DÁN CÁC CÂU HỎI MEDIUM KHÁC VÀO ĐÂY
+            ],
+            hard: [
+                // >>> DÁN CÁC CÂU HỎI HARD KHÁC VÀO ĐÂY
+                { id: "h77", q: "Ngôi sao nào là ngôi sao sáng nhất trên bầu trời đêm khi quan sát từ Trái Đất?", a: ["Sao Thiên Lang (Sirius)", "Sao Bắc Cực (Polaris)", "Sao Chức Nữ (Vega)", "Sao Đại Hùng"], c: 0 },
+                { id: "h78", q: "Tiểu thuyết bi kịch tình yêu kinh điển 'Đồi gió hú' (Wuthering Heights) là tác phẩm văn học duy nhất của nữ nhà văn nào?", a: ["Emily Brontë", "Charlotte Brontë", "Anne Brontë", "Mary Shelley"], c: 0 },
+                { id: "h79", q: "Trong lịch sử khoa bảng Việt Nam, vị danh nhân nào được mệnh danh là 'Tam Nguyên Yên Đổ'?", a: ["Nguyễn Khuyến", "Trần Tế Xương", "Lê Quý Đôn", "Cao Bá Quát"], c: 0 }
+            ],
+            extreme: [
+                // >>> DÁN MẢNG EXTREME CỦA BẠN VÀO ĐÂY
+                { id: "ex1", q: "Ai là vị nữ vương đầu tiên và duy nhất lãnh đạo bộ tộc trong lịch sử cổ đại?", a: ["Trưng Trắc", "Triệu Thị Trinh", "Lý Chiêu Hoàng", "Ỷ Lan"], c: 2 }
+            ]
+        };
+
+        const milestones = ["200.000", "400.000", "600.000", "1.000.000", "2.000.000", "3.000.000", "6.000.000", "10.000.000", "14.000.000", "22.000.000", "30.000.000", "40.000.000", "60.000.000", "85.000.000", "150.000.000"];
+        let currentLevel = 1, currentQuestion = null, timerInterval = null, timeLeft = 30;
+
+        function buildMoneySidebar() {
+            const container = document.getElementById('sidebar');
+            container.innerHTML = '';
+            milestones.forEach((money, idx) => {
+                const levelNum = idx + 1;
+                const div = document.createElement('div');
+                div.id = `milestone-${levelNum}`;
+                div.className = 'milestone';
+                if (levelNum === 5 || levelNum === 10 || levelNum === 15) div.classList.add('important');
+                div.innerHTML = `<span>${levelNum}</span> <span>${money}</span>`;
+                container.appendChild(div);
+            });
+        }
+
+        document.getElementById('btn-start').addEventListener('click', function() {
+            document.getElementById('start-modal').style.display = 'none';
+            buildMoneySidebar();
+            loadNewQuestion();
+        });
+
+        function loadNewQuestion() {
+            clearInterval(timerInterval);
+            resetAnswerButtons();
+            document.getElementById('help-output').innerHTML = "Hệ thống trợ giúp đã sẵn sàng.";
+            
+            document.querySelectorAll('.milestone').forEach(el => el.classList.remove('active'));
+            const activeMilestone = document.getElementById(`milestone-${currentLevel}`);
+            if (activeMilestone) activeMilestone.classList.add('active');
+
+            let pool = currentLevel <= 5 ? questionBank.easy : currentLevel <= 10 ? questionBank.medium : currentLevel <= 14 ? questionBank.hard : questionBank.extreme;
+            currentQuestion = pool[Math.floor(Math.random() * pool.length)];
+
+            document.getElementById('question').innerText = `Câu ${currentLevel}: ${currentQuestion.q}`;
+            for (let i = 0; i < 4; i++) {
+                const prefix = ["A. ", "B. ", "C. ", "D. "][i];
+                const btn = document.getElementById(`ans-${i}`);
+                btn.innerText = prefix + currentQuestion.a[i];
+                btn.style.visibility = 'visible';
+                btn.disabled = false;
+            }
+
+            timeLeft = 30;
+            document.getElementById('timer').innerText = timeLeft;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Hết giờ!");
+                    location.reload();
+                }
+            }, 1000);
+        }
+
+        function selectAnswer(index) {
+            clearInterval(timerInterval);
+            for (let i = 0; i < 4; i++) document.getElementById(`ans-${i}`).disabled = true;
+            const selectedBtn = document.getElementById(`ans-${index}`);
+            selectedBtn.classList.add('selected');
+
+            setTimeout(() => {
+                selectedBtn.classList.remove('selected');
+                if (index === currentQuestion.c) {
+                    selectedBtn.classList.add('correct');
+                    setTimeout(() => {
+                        if (currentLevel === 15) { alert("BẠN ĐÃ CHIẾN THẮNG!"); location.reload(); }
+                        else { currentLevel++; loadNewQuestion(); }
+                    }, 1500);
+                } else {
+                    selectedBtn.classList.add('wrong');
+                    document.getElementById(`ans-${currentQuestion.c}`).classList.add('correct');
+                    setTimeout(() => { location.reload(); }, 2000);
+                }
+            }, 1000);
+        }
+
+        // --- CÁC HÀM XỬ LÝ TRỢ GIÚP HIỂN THỊ TRÊN MÀN HÌNH ---
+        function use5050() {
+            document.getElementById('help-50').disabled = true;
+            let correctIdx = currentQuestion.c;
+            let candidates = [0, 1, 2, 3].filter(i => i !== correctIdx).sort(() => Math.random() - 0.5);
+            document.getElementById(`ans-${candidates[0]}`).style.visibility = 'hidden';
+            document.getElementById(`ans-${candidates[1]}`).style.visibility = 'hidden';
+            document.getElementById('help-output').innerText = "Hệ thống đã loại bỏ 2 phương án sai.";
+        }
+
+        function useAudience() {
+            document.getElementById('help-audience').disabled = true;
+            let cIdx = currentQuestion.c;
+            let v = [0, 0, 0, 0];
+            v[cIdx] = Math.floor(Math.random() * 20) + 60;
+            let rem = 100 - v[cIdx];
+            let rests = [0, 1, 2, 3].filter(i => i !== cIdx);
+            let v1 = Math.floor(Math.random() * rem); v[rests[0]] = v1; rem -= v1;
+            let v2 = Math.floor(Math.random() * rem); v[rests[1]] = v2; v[rests[2]] = rem - v2;
+
+            // Render biểu đồ trực tiếp vào vùng trống giữa màn hình
+            document.getElementById('help-output').innerHTML = `
+                <div class="chart-container">
+                    <div class="chart-bar-wrapper"><div class="chart-bar" style="height:${v[0]}px;"></div>A: ${v[0]}%</div>
+                    <div class="chart-bar-wrapper"><div class="chart-bar" style="height:${v[1]}px;"></div>B: ${v[1]}%</div>
+                    <div class="chart-bar-wrapper"><div class="chart-bar" style="height:${v[2]}px;"></div>C: ${v[2]}%</div>
+                    <div class="chart-bar-wrapper"><div class="chart-bar" style="height:${v[3]}px;"></div>D: ${v[3]}%</div>
+                </div>
+            `;
+        }
+
+        function usePhone() {
+            document.getElementById('help-phone').disabled = true;
+            const labels = ["A", "B", "C", "D"];
+            let ans = Math.random() < 0.85 ? labels[currentQuestion.c] : labels[[0,1,2,3].filter(i => i !== currentQuestion.c)[0]];
+            document.getElementById('help-output').innerHTML = `📞 Người thân: "Theo mình đáp án câu này chắc chắn là <strong>${ans}</strong>!"`;
+        }
+
+        function useTeam() {
+            document.getElementById('help-team').disabled = true;
+            const labels = ["A", "B", "C", "D"];
+            let cLabel = labels[currentQuestion.c];
+            let wLabel = labels[[0,1,2,3].filter(i => i !== currentQuestion.c)[0]];
+            document.getElementById('help-output').innerHTML = `
+                🧠 Tổ tư vấn tại chỗ gợi ý:<br>
+                - Chuyên gia 1: Tôi chọn <strong>${cLabel}</strong> | 
+                - Chuyên gia 2: Phương án đúng là <strong>${cLabel}</strong> | 
+                - Chuyên gia 3: Tôi phân vân sang <strong>${wLabel}</strong>
+            `;
+        }
+
+        function stopGame() {
+            clearInterval(timerInterval);
+            let money = currentLevel > 1 ? milestones[currentLevel - 2] : "0";
+            if(confirm(`Bạn muốn dừng cuộc chơi và mang về ${money} VNĐ?`)) location.reload();
+            else {
+                timerInterval = setInterval(() => {
+                    timeLeft--; document.getElementById('timer').innerText = timeLeft;
+                    if (timeLeft <= 0) { clearInterval(timerInterval); location.reload(); }
+                }, 1000);
+            }
+        }
+
+        function resetAnswerButtons() {
+            for (let i = 0; i < 4; i++) document.getElementById(`ans-${i}`).className = 'answer-btn';
+        }
+    </script>
+</body>
+</html>
