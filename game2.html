@@ -3,464 +3,885 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ai Là Triệu Phú - Giao Diện Chuẩn</title>
+    <title>Ai Là Triệu Phú - Phiên Bản Cao Cấp</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --bg-gradient: linear-gradient(180deg, #091136 0%, #030616 100%);
+            --panel-bg: rgba(11, 21, 62, 0.85);
+            --neon-blue: #00f3ff;
+            --neon-gold: #ffd700;
+            --text-color: #ffffff;
+            --border-glow: 0 0 15px rgba(0, 243, 255, 0.3);
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle, #0c1033 0%, #05071a 100%);
-            color: white;
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; user-select: none; }
+        
+        body { 
+            background: var(--bg-gradient); 
+            color: var(--text-color); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            padding: 20px;
         }
-        .game-container {
+
+        .main-frame {
+            background: var(--panel-bg);
+            border: 2px solid var(--neon-blue);
+            border-radius: 20px;
+            box-shadow: var(--border-glow);
+            width: 100%;
+            max-width: 1100px;
             display: flex;
-            width: 98%;
-            max-width: 1250px;
-            height: 650px;
-            background: #090e2e;
-            border: 3px solid #4a6fa5;
-            border-radius: 16px;
             overflow: hidden;
-        }
-        .main-game {
-            flex: 3;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 25px;
             position: relative;
         }
-        .money-sidebar {
-            flex: 1;
-            background: #060a22;
-            border-left: 3px solid #1e3a60;
+
+        .game-zone {
+            flex: 3;
+            padding: 30px;
+            border-right: 2px solid rgba(0, 243, 255, 0.2);
             display: flex;
-            flex-direction: column-reverse;
-            justify-content: space-around;
-            padding: 10px 20px;
-        }
-        .milestone {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            color: #4a6fa5;
-            font-size: 0.9rem;
-        }
-        .milestone.active {
-            background: linear-gradient(90deg, #e69512 0%, #f9c846 100%);
-            color: black;
-        }
-        .milestone.important {
-            color: #00d2ff;
-        }
-        
-        /* THANH ĐIỀU HƯỚNG TRÊN CÙNG TRỰC QUAN */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-        .timer-box {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 3px solid #ff9900;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.6rem;
-            font-weight: bold;
-            color: #ff9900;
-        }
-        .helps {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        /* THIẾT KẾ NÚT TRÒN LỒNG BIỂU TƯỢNG + CHỮ NHƯ HÌNH MẪU */
+        .sidebar-zone {
+            flex: 1;
+            background: rgba(5, 10, 35, 0.9);
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* KHU VỰC TRỢ GIÚP */
+        .help-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 5px;
+            flex-wrap: wrap;
+        }
+
+        .help-box-wrapper {
+            position: relative;
+            width: 85px;
+            height: 55px;
+        }
+
         .help-btn {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            border: 2px solid #5869a2;
-            background: rgba(15, 23, 70, 0.6);
-            color: #a4b3d6;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #121a4e 0%, #060b24 100%);
+            border: 2px solid #3a539b;
+            color: #ffffff;
+            border-radius: 50% / 50%;
+            font-size: 11px;
             font-weight: bold;
-            font-size: 0.7rem;
             cursor: pointer;
+            transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            line-height: 1.1;
+            gap: 3px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
         }
-        .help-btn span {
-            font-size: 0.85rem;
-            margin-top: 1px;
+
+        .help-btn .icon {
+            font-size: 16px;
         }
-        .help-btn:hover:not(:disabled) {
-            border-color: #00d2ff;
-            color: #00d2ff;
-            box-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+
+        .help-btn:hover:not(.used) {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+            transform: scale(1.05);
         }
-        .help-btn:disabled {
-            border-color: #222 !important;
-            color: #444 !important;
-            background: #060814 !important;
-            text-decoration: line-through;
+
+        .help-box-wrapper.used::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                linear-gradient(to top right, transparent 45%, #ff2222 48%, #ff2222 52%, transparent 55%),
+                linear-gradient(to top left, transparent 45%, #ff2222 48%, #ff2222 52%, transparent 55%);
+            border-radius: 50% / 50%;
+            pointer-events: none;
+        }
+        .help-box-wrapper.used .help-btn {
+            border-color: #444 !important;
+            color: #666 !important;
+            background: #111 !important;
             cursor: not-allowed;
         }
-        .stop-btn {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            border: 2px solid #ff3333;
-            background: rgba(40, 10, 10, 0.6);
-            color: #ff8888;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .stop-btn:hover {
-            box-shadow: 0 0 10px #ff3333;
+
+        /* ĐỒNG HỒ THỜI GIAN */
+        .timer-container {
+            background: rgba(4, 8, 28, 0.6);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-top: 5px;
         }
 
-        /* KHU VỰC HIỂN THỊ KẾT QUẢ TRỢ GIÚP GIỮA MÀN HÌNH */
-        .help-display-zone {
-            width: 85%;
-            height: 130px;
-            margin: 10px auto;
-            background: rgba(5, 8, 32, 0.7);
-            border: 1px dashed #1e3a60;
-            border-radius: 12px;
+        .timer-info {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            text-align: center;
-        }
-        .help-text-output {
-            font-size: 1.1rem;
-            color: #00ffcc;
-            line-height: 1.5;
-            font-weight: 500;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 6px;
         }
 
-        /* BIỂU ĐỒ CỘT KHÁN GIẢ MINI */
-        .chart-container {
-            display: flex;
-            gap: 25px;
-            align-items: flex-end;
+        .time-text { color: #ff3333; font-size: 16px; }
+
+        .progress-line {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 100%;
             height: 100%;
-        }
-        .chart-bar-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 0.85rem;
-        }
-        .chart-bar {
-            width: 30px;
-            background: linear-gradient(to top, #0055ff, #00d2ff);
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-            transition: height 0.5s ease;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            transition: width 0.1s linear;
         }
 
-        /* KHUNG CÂU HỎI VÀ ĐÁP ÁN */
-        .question-box {
-            background: rgba(10, 16, 54, 0.8);
-            border: 2px solid #4a6fa5;
-            padding: 20px 40px;
-            border-radius: 40px;
-            text-align: center;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--neon-gold);
+            font-weight: bold;
+            font-size: 16px;
+            padding: 0 5px;
+            margin-top: 10px;
         }
+
+        /* KHU VỰC CÂU HỎI */
+        .question-container {
+            background: rgba(9, 19, 58, 0.95);
+            border: 2px solid rgba(0, 243, 255, 0.6);
+            border-radius: 40px;
+            padding: 30px 25px;
+            text-align: center;
+            font-size: 19px;
+            font-weight: bold;
+            min-height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.2);
+            line-height: 1.4;
+        }
+
+        /* LƯỚI ĐÁP ÁN */
         .answers-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
-        .answer-btn {
-            background: rgba(10, 16, 54, 0.8);
-            border: 1px solid #4a6fa5;
-            padding: 15px 30px;
-            border-radius: 40px;
-            color: white;
-            font-size: 1.05rem;
+
+        .answer-card {
+            background: rgba(9, 19, 58, 0.7);
+            border: 2px solid rgba(0, 243, 255, 0.4);
+            border-radius: 30px;
+            padding: 16px 25px;
             text-align: left;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-        }
-        .answer-btn:hover:not(:disabled) {
-            background: #162465;
-            border-color: #fff;
-        }
-        .answer-btn.selected {
-            background: #e69512 !important;
-            color: black !important;
-        }
-        .answer-btn.correct {
-            background: #00cc55 !important;
-            color: black !important;
-            font-weight: bold;
-        }
-        .answer-btn.wrong {
-            background: #cc2222 !important;
-            color: white !important;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
         }
 
-        /* MODAL KHỞI ĐỘNG */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #040616;
+        .answer-card:hover:not(.disabled) {
+            border-color: var(--neon-gold);
+            background: rgba(24, 43, 114, 0.6);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+
+        .prefix {
+            color: var(--neon-gold);
+            margin-right: 12px;
+            font-weight: bold;
+        }
+
+        .answer-card.selected { background: #ff9100 !important; border-color: #ffffff !important; color: #000000 !important; }
+        .answer-card.correct { background: #2e7d32 !important; border-color: #a1ffb2 !important; color: white !important; }
+        .answer-card.wrong { background: #c62828 !important; border-color: #ff9e9e !important; color: white !important; }
+        .answer-card.disabled { cursor: not-allowed; opacity: 0.6; }
+
+        /* THÁP TIỀN THƯỞNG */
+        .money-ladder {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 3px;
+        }
+
+        .ladder-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 15px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #6175aa;
+            border-radius: 4px;
+        }
+
+        .ladder-item.active {
+            background: linear-gradient(90deg, #ff8f00, #e65100);
+            color: #ffffff !important;
+            box-shadow: 0 0 8px #ff8f00;
+        }
+
+        .ladder-item.milestone { color: var(--neon-gold); }
+
+        /* KHUNG HIỂN THỊ TRỢ GIÚP TRỰC TIẾP */
+        .live-help-panel {
+            display: none;
+            background: rgba(6, 12, 42, 0.95);
+            border: 2px solid var(--neon-gold);
+            border-radius: 15px;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            margin-top: 5px;
+            animation: slideDown 0.3s ease;
+        }
+
+        .live-help-title { color: var(--neon-gold); font-weight: bold; font-size: 15px; margin-bottom: 5px; text-transform: uppercase; }
+        .live-help-content { font-size: 15px; color: #e2e8f0; font-style: italic; }
+
+        /* BIỂU ĐỒ KHÁN GIẢ */
+        .chart-container {
             display: flex;
             justify-content: center;
+            align-items: flex-end;
+            gap: 30px;
+            height: 80px;
+            margin-top: 10px;
+        }
+        .chart-column {
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            z-index: 1000;
+            width: 40px;
+            font-size: 12px;
+            color: #ffffff;
         }
-        .modal-content {
-            background: #0e143c;
-            border: 2px solid #ffcc00;
-            padding: 40px;
+        .chart-bar {
+            width: 100%;
+            background: linear-gradient(to top, #0088cc, #00f3ff);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.6s ease-out;
+            margin-bottom: 4px;
+        }
+
+        /* POPUP MODAL CHÍNH */
+        .modal-overlay {
+            display: flex;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 4, 15, 0.93);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-box {
+            background: #0b153e;
+            border: 3px solid var(--neon-gold);
             border-radius: 20px;
+            padding: 40px;
+            max-width: 480px;
             text-align: center;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
         }
-        .start-btn {
-            background: #ff9900;
-            color: black;
+
+        .modal-box h2 { font-size: 28px; color: var(--neon-gold); margin-bottom: 15px; }
+        .modal-box p { font-size: 16px; margin-bottom: 25px; color: #cbd5e1; line-height: 1.5; }
+        
+        .action-btn {
+            background: linear-gradient(90deg, #ff8f00, #ffb300);
             border: none;
             padding: 12px 35px;
-            font-size: 1.1rem;
+            font-size: 16px;
             font-weight: bold;
-            border-radius: 30px;
+            color: #000000;
+            border-radius: 25px;
             cursor: pointer;
+            transition: 0.2s;
         }
+        .action-btn:hover { transform: scale(1.05); }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="start-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 style="color:#ffcc00; margin-bottom:20px;">AI LÀ TRIỆU PHÚ</h2>
-            <button id="btn-start" class="start-btn">BẮT ĐẦU CHƠI</button>
+    <div class="main-frame">
+        <div class="game-zone">
+            <div class="help-container">
+                <div class="help-box-wrapper" id="wrap-5050">
+                    <button class="help-btn" onclick="use5050()">
+                        <span class="icon">⚖️</span>
+                        <span>50 / 50</span>
+                    </button>
+                </div>
+                <div class="help-box-wrapper" id="wrap-call">
+                    <button class="help-btn" onclick="useCall()">
+                        <span class="icon">📞</span>
+                        <span>Người Thân</span>
+                    </button>
+                </div>
+                <div class="help-box-wrapper" id="wrap-audience">
+                    <button class="help-btn" onclick="useAudience()">
+                        <span class="icon">📊</span>
+                        <span>Khán Giả</span>
+                    </button>
+                </div>
+                <div class="help-box-wrapper" id="wrap-expert">
+                    <button class="help-btn" onclick="useExpert()">
+                        <span class="icon">🎓</span>
+                        <span>Chuyên Gia</span>
+                    </button>
+                </div>
+                <div class="help-box-wrapper" style="width: auto; height: 55px;">
+                    <button class="help-btn" style="border-color: #c62828; color: #ff8a8a; border-radius: 20px; padding: 0 15px;" onclick="stopGame()">
+                        <span class="icon" style="margin-bottom: 2px;">🏳️</span>
+                        <span>Dừng chơi</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="timer-container">
+                <div class="timer-info">
+                    <span>Thời gian: <span class="time-text" id="timer-countdown">30</span> giây</span>
+                </div>
+                <div class="progress-line">
+                    <div class="progress-fill" id="timer-bar"></div>
+                </div>
+            </div>
+
+            <div class="status-bar">
+                <span id="stage-text">Chặng 1: Khởi động</span>
+                <span id="prize-text">200.000 VNĐ</span>
+            </div>
+
+            <div class="live-help-panel" id="live-help-box">
+                <div class="live-help-title" id="live-help-title">Hỗ trợ</div>
+                <div class="live-help-content" id="live-help-content">Nội dung...</div>
+            </div>
+
+            <div class="question-container" id="question-display">
+                Đang tải câu hỏi...
+            </div>
+
+            <div class="answers-grid">
+                <div class="answer-card" id="btn-0" onclick="selectAnswer(0)"><span class="prefix">A.</span><span id="text-0"></span></div>
+                <div class="answer-card" id="btn-1" onclick="selectAnswer(1)"><span class="prefix">B.</span><span id="text-1"></span></div>
+                <div class="answer-card" id="btn-2" onclick="selectAnswer(2)"><span class="prefix">C.</span><span id="text-2"></span></div>
+                <div class="answer-card" id="btn-3" onclick="selectAnswer(3)"><span class="prefix">D.</span><span id="text-3"></span></div>
+            </div>
+        </div>
+
+        <div class="sidebar-zone">
+            <div class="money-ladder" id="money-ladder-ui"></div>
         </div>
     </div>
 
-    <div class="game-container">
-        <div class="main-game">
-            <div class="top-bar">
-                <div id="timer" class="timer-box">30</div>
-                
-                <div class="helps">
-                    <button id="help-50" class="help-btn" onclick="use5050()">50:50</button>
-                    <button id="help-audience" class="help-btn" onclick="useAudience()">👥<span>KH</span></button>
-                    <button id="help-phone" class="help-btn" onclick="usePhone()">📞<span>NT</span></button>
-                    <button id="help-team" class="help-btn" onclick="useTeam()">🧠<span>TV</span></button>
-                    <button id="btn-stop" class="stop-btn" onclick="stopGame()">🛑</button>
-                </div>
-            </div>
-
-            <div class="help-display-zone">
-                <div id="help-output" class="help-text-output">Hệ thống trợ giúp đã sẵn sàng.</div>
-            </div>
-
-            <div>
-                <div id="question" class="question-box">Đang tải câu hỏi...</div>
-                <div class="answers-grid">
-                    <button id="ans-0" class="answer-btn" onclick="selectAnswer(0)">A. </button>
-                    <button id="ans-1" class="answer-btn" onclick="selectAnswer(1)">B. </button>
-                    <button id="ans-2" class="answer-btn" onclick="selectAnswer(2)">C. </button>
-                    <button id="ans-3" class="answer-btn" onclick="selectAnswer(3)">D. </button>
-                </div>
-            </div>
+    <div id="game-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 id="modal-title">AI LÀ TRIỆU PHÚ</h2>
+            <p id="modal-desc">Sẵn sàng trải nghiệm phiên bản nâng cấp có đồng hồ 30 giây và hệ thống trợ giúp trực quan mới?</p>
+            <button class="action-btn" onclick="initGame()" id="modal-btn">BẮT ĐẦU CHƠI</button>
         </div>
-
-        <div id="sidebar" class="money-sidebar"></div>
     </div>
 
     <script>
+        // NGÂN HÀNG CÂU HỎI GỐC (ĐÃ ĐƯỢC XÁO TRỘN ĐÁP ÁN VÀ CẬP NHẬT CHỈ SỐ 'c' CHUẨN XÁC)
         const questionBank = {
             easy: [
-                { id: "e1", q: "Bộ môn thể thao nào được mệnh danh là môn thể thao vua?", a: ["Bóng đá", "Cầu lông", "Bóng rổ", "Bóng chuyền"], c: 0 },
-                { id: "e2", q: "Trong môn Cờ vua, quân cờ nào chỉ có thể đi chéo?", a: ["Tượng", "Xe", "Mã", "Hậu"], c: 0 }
-                // >>> DÁN CÁC CÂU HỎI EASY KHÁC VÀO ĐÂY
+                { id: "e1", q: "Ngày 1 tháng 4 dương lịch hàng năm được gọi là ngày gì trong văn hóa phương Tây và quốc tế?", a: ["Ngày lễ Giáng sinh", "Ngày lễ Tình nhân", "Ngày Cá tháng Tư (Ngày nói dối)", "Ngày Halloween"], c: 2 },
+                { id: "e2", q: "Điền từ còn thiếu vào câu thành ngữ sau: \"Đi guốc trong...\"?", a: ["Bụng", "Tai", "Đầu", "Miệng"], c: 0 },
+                { id: "e3", q: "Bộ phim hoạt hình kinh điển \"Tom và Jerry\" là cuộc rượt đuổi không hồi kết giữa hai con vật nào?", a: ["Chó và Mèo", "Mèo và Chuột", "Sói và Thỏ", "Gấu và Ong"], c: 1 },
+                { id: "e4", q: "Thành từ nào còn thiếu trong câu thành ngữ: \"Chữ như gà...\"?", a: ["Cào", "Bới", "Đạp", "Mổ"], c: 1 },
+                { id: "e5", q: "Trong trò chơi cờ Vua, quân cờ nào duy nhất có thể đi chéo và chỉ được di chuyển trên các ô cùng màu suốt cả ván đấu?", a: ["Quân Mã", "Quân Xe", "Quân Hậu", "Quân Tượng"], c: 3 },
+                { id: "e6", q: "Bộ truyện tranh nổi tiếng \"Thám tử lừng danh Conan\" có nguồn gốc từ quốc gia nào?", a: ["Hàn Quốc", "Nhật Bản", "Trung Quốc", "Mỹ"], c: 1 },
+                { id: "e7", q: "Từ nào còn thiếu trong câu thành ngữ: \"Vắt cổ... ra nước\"?", a: ["Chày", "Cối", "Kim", "Chén"], c: 0 },
+                { id: "e8", q: "Theo Luật Giao thông đường bộ Việt Nam, người điều khiển xe gắn máy bắt buộc phải đội loại mũ bảo hiểm nào khi tham gia giao thông?", a: ["Mũ bảo hộ lao động", "Mũ rộng vành chống nắng", "Mũ bảo hiểm đạt chuẩn cho người đi mô tô, xe máy", "Mũ lưỡi trai có lót cứng"], c: 2 },
+                { id: "e9", q: "Loại quả nào sau đây là nguyên liệu chính không thể thiếu của món \"Sinh tố bơ\" béo ngậy?", a: ["Quả xoài", "Quả sầu riêng", "Quả bơ", "Quả mít"], c: 2 },
+                { id: "e10", q: "Trong truyện cổ tích \"Cây tre trăm đốt\", câu thần chú nào được nhân vật Khoai sử dụng để gắn các đốt tre lại với nhau?", a: ["Khắc nhập, khắc nhập", "Khắc xuất, khắc xuất", "Vừng ơi mở ra", "Úm ba la xì bùa"], c: 0 },
+                { id: "e11", q: "Ứng dụng nhắn tin, gọi điện miễn phí cực kỳ phổ biến do người Việt phát triển và sở hữu hiện nay là ứng dụng nào?", a: ["Viber", "Zalo", "WhatsApp", "Telegram"], c: 1 },
+                { id: "e12", q: "Tết Đoan Ngọ (mùng 5 tháng 5 Âm lịch) trong văn hóa dân gian Việt Nam còn được gọi bằng cái tên phổ biến nào khác?", a: ["Tết Giết sâu bọ", "Tết Khai hạ", "Tết Trung nguyên", "Tết Hạ nguyên"], c: 0 },
+                { id: "e13", q: "Điền từ còn thiếu vào câu thành ngữ sau: \"Ếch ngồi đáy...\"?", a: ["Ao", "Chum", "Giếng", "Hồ"], c: 2 },
+                { id: "e14", q: "Ngày Báo chí Cách mạng Việt Nam được kỷ niệm hàng năm vào ngày nào trong tháng 6?", a: ["Ngày 1 tháng 6", "Ngày 21 tháng 6", "Ngày 5 tháng 6", "Ngày 28 tháng 6"], c: 1 },
+                { id: "e15", q: "Tập truyện dài nổi tiếng dành cho thiếu nhi \"Kính vạn hoa\" của nhà văn Nguyễn Nhật Ánh xoay quanh bộ ba nhân vật học trò nào?", a: ["Quý ròm, Tiểu Long, Hạnh", "Tuấn, Dũng, Thục Hiền", "Mận, Thiều, Tường", "An, Cò, Xinh"], c: 0 },
+                { id: "e16", q: "Loại quả nào là nguyên liệu chính để làm nên món chè vải hạt sen ngọt mát của mùa hè miền Bắc?", a: ["Quả nhãn", "Quả chôm chôm", "Quả vải", "Quả mận"], c: 2 },
+                { id: "e17", q: "Điền từ còn thiếu vào câu thành ngữ sau: \"Lửa gần rơm lâu ngày cũng...\"?", a: ["Bốc", "Cháy", "Tắt", "Nóng"], c: 1 },
+                { id: "e18", q: "Trái cây nào sau đây thường có một hạt lớn ở giữa, thịt quả màu vàng, khi chín có mùi thơm rất đặc trưng và được mệnh danh là \"vua trái cây nhiệt đới\"?", a: ["Sầu riêng", "Măng cụt", "Chôm chôm", "Thanh long"], c: 0 },
+                { id: "e19", q: "Ngày Thương binh - Liệt sĩ Việt Nam được kỷ niệm hàng năm vào ngày nào để tri ân các anh hùng liệt sĩ?", a: ["Ngày 1 tháng 5", "Ngày 27 tháng 7", "Ngày 19 tháng 8", "Ngày 22 tháng 12"], c: 1 },
+                { id: "e20", q: "Trong môn thể thao bơi lội, kiểu bơi nào mà người bơi nằm ngửa và phối hợp động tác tay quạt luân phiên kết hợp đạp chân?", a: ["Bơi ếch", "Bơi ngửa", "Bơi bướm", "Bơi sải"], c: 1 },
+                { id: "e21", q: "Địa danh nào sau đây nổi tiếng với tên gọi \"Thành phố sương mù\" của Việt Nam, một điểm du lịch tránh nóng lý tưởng?", a: ["Vũng Tàu", "Nha Trang", "Đà Lạt", "Phan Thiết"], c: 2 },
+                { id: "e22", q: "Điền từ còn thiếu vào câu thành ngữ sau: \"Cá không ăn muối cá...\"?", a: ["Ươn", "Thối", "Hỏng", "Chết"], c: 0 },
+                { id: "e23", q: "Ngày Cách mạng tháng Tám thành công của Việt Nam được kỷ niệm hàng năm vào ngày nào?", a: ["Ngày 2 tháng 9", "Ngày 27 tháng 7", "Ngày 19 tháng 8", "Ngày 30 tháng 4"], c: 2 },
+                { id: "e24", q: "Loại nhạc cụ nào sau đây thường có cấu tạo gồm các phím tre hoặc gỗ xếp theo thứ tự từ lớn đến nhỏ và dùng hai dùi để gõ?", a: ["Đàn T'rưng", "Đàn Bầu", "Đàn Tranh", "Đàn Đáy"], c: 0 },
+                { id: "e25", q: "Từ nào còn thiếu trong câu thành ngữ: \"Lá lành đùm lá...\"?", a: ["Héo", "Úa", "Rách", "Sâu"], c: 2 },
+                { id: "e26", q: "Ngày Quốc khánh nước Cộng hòa Xã hội Chủ nghĩa Việt Nam được kỷ niệm hàng năm vào ngày nào?", a: ["Ngày 19 tháng 8", "Ngày 2 tháng 9", "Ngày 10 tháng 10", "Ngày 30 tháng 4"], c: 1 },
+                { id: "e27", q: "Loại đèn truyền thống nào thường được trẻ em Việt Nam rước xách nhiều nhất trong đêm hội trăng rằm Trung thu?", a: ["Đèn kéo quân", "Đèn ông sao", "Đèn hoa đăng", "Đèn lồng giấy xếp"], c: 1 },
+                { id: "e28", q: "Trên bàn cờ Tướng tiêu chuẩn, quân cờ nào chỉ được phép di chuyển trong cung (9 ô) và không được đi qua sông?", a: ["Quân Xe", "Quân Pháo", "Quân Sĩ", "Quân Mã"], c: 2 },
+                { id: "e29", q: "Đâu là tên một loại bánh trung thu truyền thống có vỏ ngoài nướng chín vàng nâu, bên trong thường là nhân thập cẩm hoặc đậu xanh?", a: ["Bánh nướng", "Bánh dẻo", "Bánh pía", "Bánh in"], c: 0 },
+                { id: "e30", q: "Từ nào còn thiếu trong câu thành ngữ: \"Chị ngã em...\"?", a: ["Đỡ", "Nâng", "Dìu", "Cười"], c: 1 },
+                { id: "e31", q: "Ngày Giải phóng Thủ đô Hà Nội được kỷ niệm hàng năm vào ngày nào?", a: ["Ngày 19 tháng 8", "Ngày 2 tháng 9", "Ngày 10 tháng 10", "Ngày 20 tháng 10"], c: 2 },
+                { id: "e32", q: "Ngày Phụ nữ Việt Nam là ngày nào dưới đây?", a: ["Ngày 8 tháng 3", "Ngày 20 tháng 10", "Ngày 20 tháng 11", "Ngày 22 tháng 12"], c: 1 },
+                { id: "e33", q: "Đâu là tên một món ăn đặc sản mùa thu rất nổi tiếng của Hà Nội, thường được gói trong lá sen?", a: ["Bánh tẻ", "Cốm làng Vòng", "Bánh phu thê", "Bánh tôm"], c: 1 },
+                { id: "e34", q: "Loài động vật nào dưới đây nổi tiếng với khả năng di chuyển chậm chạp và thường sống trên cây?", a: ["Con báo", "Con sóc", "Con khỉ", "Con lười"], c: 3 },
+                { id: "e35", q: "Trong truyện cổ tích \"Thạch Sanh\", Thạch Sanh đã dùng vũ khí gì để kết liễu Chằn tinh?", a: ["Búa rìu", "Cung tên", "Thanh gươm", "Gậy thần"], c: 0 },
+                { id: "e36", q: "Bộ phim hoạt hình nào kể về một chú bé gỗ có chiếc mũi dài ra mỗi khi nói dối?", a: ["Aladin", "Peter Pan", "Pinocchio", "Dumbo"], c: 2 },
+                { id: "e37", q: "Nhạc cụ nào sau đây là nhạc cụ phương Tây có phím đen và trắng, kích thước lớn nhất trong các loại nhạc cụ có bàn phím?", a: ["Đàn Piano", "Đàn Organ", "Đàn Guitar", "Đàn Violin"], c: 0 },
+                { id: "e38", q: "Bộ phận nào trên cây có chức năng chính là hút nước và chất dinh dưỡng từ lòng đất?", a: ["Thân", "Lá", "Rễ", "Hoa"], c: 2 },
+                { id: "e39", q: "Đâu là thủ đô của nước Cộng hòa Xã hội Chủ nghĩa Việt Nam?", a: ["Thành phố Hồ Chí Minh", "Đà Nẵng", "Hà Nội", "Hải Phòng"], c: 2 }
             ],
             medium: [
-                { id: "m34", q: "Tỉnh nào sau đây của Việt Nam nổi tiếng với đặc sản Gà nướng Bản Đôn?", a: ["Đắk Lắk", "Gia Lai", "Lâm Đồng", "Kon Tum"], c: 0 }
-                // >>> DÁN CÁC CÂU HỎI MEDIUM KHÁC VÀO ĐÂY
+                { id: "m1", q: "Trong các loại nhạc cụ sau, đâu là nhạc cụ gõ truyền thống thường được sử dụng trong các lễ hội ở vùng Tây Nguyên?", a: ["Đàn T'rưng", "Cồng chiêng", "Đàn K'ni", "Đàn đá"], c: 1 },
+                { id: "m2", q: "Vở kịch cổ điển \"Romeo và Juliet\" của đại văn hào William Shakespeare lấy bối cảnh tại thành phố nào của nước Ý?", a: ["Verona", "Rome", "Venice", "Florence"], c: 0 },
+                { id: "m3", q: "Trong y học, loại thuốc nào thường được sử dụng để tiêu diệt hoặc kìm hãm sự phát triển của vi khuẩn, nhưng không có tác dụng đối với virus?", a: ["Thuốc giảm đau", "Thuốc hạ sốt", "Thuốc kháng sinh", "Thuốc bổ vitamin"], c: 2 },
+                { id: "m4", q: "Ngày Trái Đất (Earth Day) nhằm nâng cao nhận thức và giá trị của môi trường tự nhiên được tổ chức định kỳ vào ngày nào trong tháng 4 hàng năm?", a: ["Ngày 14 tháng 4", "Ngày 22 tháng 4", "Ngày 30 tháng 4", "Ngày 10 tháng 4"], c: 1 },
+                { id: "m5", q: "Giải thưởng danh giá \"Cánh diều Vàng\" do Hội Điện ảnh Việt Nam trao tặng hàng năm nhằm vinh danh các tác phẩm xuất sắc trong lĩnh vực nào?", a: ["Điện ảnh", "Âm nhạc", "Văn học", "Hội họa"], c: 0 },
+                { id: "m6", q: "Ngày Khoa học và Công nghệ Việt Nam nhằm tôn vinh đội ngũ trí thức, các nhà khoa học được tổ chức định kỳ vào ngày nào trong tháng 5?", a: ["Ngày 18 tháng 5", "Ngày 1 tháng 5", "Ngày 15 tháng 5", "Ngày 19 tháng 5"], c: 0 },
+                { id: "m7", q: "Bộ phim truyền hình kinh điển \"Đất và Người\" (phát sóng trên VTV xưa) dựa trên tiểu thuyết nổi tiếng nào của nhà văn Nguyễn Khắc Trường?", a: ["Bến không chồng", "Mảnh đất lắm người nhiều ma", "Thời xa vắng", "Lão Hạc"], c: 1 },
+                { id: "m8", q: "Tỉnh nào sau đây của Việt Nam sở hữu địa danh \"Ngã ba Đồng Lộc\" – di tích lịch sử gắn liền với sự hy sinh anh dũng của 10 cô gái thanh niên xung phong?", a: ["Thanh Hóa", "Nghệ An", "Hà Tĩnh", "Quảng Trị"], c: 2 },
+                { id: "m9", q: "Loại hormone nào trong cơ thể con người do tuyến tụy tiết ra, đóng vai trò chủ chốt trong việc chuyển hóa đường?", a: ["Insulin", "Adrenaline", "Testosterone", "Thyroxin"], c: 0 },
+                { id: "m10", q: "Ngày Môi trường Thế giới (5 tháng 6) hàng năm do cơ quan nào của Liên Hợp Quốc phát động?", a: ["UNESCO", "UNEP (Chương trình Môi trường LHQ)", "UNICEF", "WHO"], c: 1 },
+                { id: "m11", q: "Eo biển nào là ranh giới tự nhiên ngăn cách giữa châu Á và châu Mỹ (giữa vùng Siberia của Nga và bang Alaska của Mỹ)?", a: ["Eo biển Bering", "Eo biển Malacca", "Eo biển Gibraltar", "Eo biển Magellan"], c: 0 },
+                { id: "m12", q: "Tỉnh nào ở vùng Tây Bắc nước ta nổi tiếng với cao nguyên Mộc Châu, nơi có những đồi chè trái tim xanh mướt?", a: ["Lào Cai", "Sơn La", "Thái Bình", "Phú Thọ"], c: 1 },
+                { id: "m13", q: "Trong hóa học, chất khí nào sinh ra từ quá trình quang hợp của cây xanh dưới ánh sáng mặt trời?", a: ["Khí Cacbonic (CO₂)", "Khí Oxy (O₂)", "Khí Nitơ (N₂)", "Khí Hydro (H₂)"], c: 1 },
+                { id: "m14", q: "Nghĩa trang Liệt sĩ Quốc gia Trường Sơn - nơi an nghỉ của hơn 10.000 liệt sĩ trong cuộc kháng chiến chống Mỹ - nằm ở tỉnh nào?", a: ["Quảng Trị", "Hà Tĩnh", "Thừa Thiên Huế", "Nghệ An"], c: 0 },
+                { id: "m15", q: "Eo biển nào ngăn cách giữa đảo quốc Singapore và bán đảo Mã Lai?", a: ["Eo biển Johor", "Eo biển Malacca", "Eo biển Sunda", "Eo biển Đài Loan"], c: 0 },
+                { id: "m16", q: "Hiện tượng thiên văn nào xảy ra khi Trái Đất nằm trực tiếp giữa Mặt Trời và Mặt Trăng, khiến Mặt Trăng bị che khuất bởi bóng của Trái Đất?", a: ["Nguyệt thực", "Nhật thực", "Sao băng", "Cực quang"], c: 0 },
+                { id: "m17", q: "Trong cơ thể con người, cơ quan nào có khối lượng lớn nhất bên trong cơ thể (nội tạng) và đảm nhận chức năng thải độc chính?", a: ["Tim", "Thận", "Gan", "Phổi"], c: 2 },
+                { id: "m18", q: "Ai là người đã khởi xướng và lãnh đạo phong trào Đông Du trong lịch sử Việt Nam đầu thế kỷ XX?", a: ["Phan Bội Châu", "Phan Châu Trinh", "Nguyễn Thái Học", "Hoàng Hoa Thám"], c: 0 },
+                { id: "m19", q: "Tỉnh nào sau đây của Việt Nam có đường biên giới trên đất liền giáp với cả hai quốc gia Lào và Campuchia?", a: ["Kon Tum", "Điện Biên", "Gia Lai", "Đắk Lắk"], c: 0 },
+                { id: "m20", q: "Dãy núi nào được coi là ranh giới tự nhiên phân chia giữa hai châu lục: Châu Âu và Châu Á?", a: ["Dãy Alps", "Dãy Ural", "Dãy Himalaya", "Dãy Andes"], c: 1 },
+                { id: "m21", q: "Chất nào sau đây là thành phần chính của màng tế bào thực vật, tạo nên độ bền vững và cấu trúc cứng cáp cho thân cây?", a: ["Tinh bột", "Cellulose (Xenlulozơ)", "Protein", "Lipid"], c: 1 },
+                { id: "m22", q: "Nhạc sĩ nào là tác giả của ca khúc \"Ba đình nắng\" – một tác phẩm âm nhạc kinh điển ca ngợi ngày độc lập 2/9?", a: ["Nhạc sĩ Bùi Công Kỳ", "Nhạc sĩ Văn Cao", "Nhạc sĩ Lưu Hữu Phước", "Nhạc sĩ Phạm Tuyên"], c: 0 },
+                { id: "m23", q: "Ở người trưởng thành bình thường, chu kỳ tim kéo dài khoảng bao nhiêu giây khi cơ thể ở trạng thái nghỉ ngơi?", a: ["0.4 giây", "0.8 giây", "1.2 giây", "2.0 giây"], c: 1 },
+                { id: "m24", q: "Quốc gia nào sau đây sở hữu hòn đảo nhân tạo hình cây cọ (Palm Jumeirah) lớn nhất và nổi tiếng nhất thế giới?", a: ["Các Tiểu vương quốc Ả Rập Thống nhất (UAE)", "Qatar", "Ả Rập Xê Út", "Singapore"], c: 0 },
+                { id: "m25", q: "Hành tinh nào được gọi là \"Hành tinh đỏ\" trong Hệ Mặt Trời?", a: ["Sao Thủy", "Sao Kim", "Sao Hỏa", "Sao Mộc"], c: 2 },
+                { id: "m26", q: "Cầu Long Biên – cây cầu lịch sử bắc qua sông Hồng tại Hà Nội – do công ty của quốc gia nào thiết kế và thi công?", a: ["Pháp", "Anh", "Mỹ", "Nga"], c: 0 },
+                { id: "m27", q: "Eo biển nào rộng lớn nằm giữa đảo miền Nam nước Úc và đảo Tasmania?", a: ["Eo biển Bass", "Eo biển Cook", "Eo biển Torres", "Eo biển Magellan"], c: 0 },
+                { id: "m28", q: "Vitamin nào có nhiều nhất trong ánh nắng mặt trời buổi sớm và giúp cơ thể hấp thụ canxi tốt hơn?", a: ["Vitamin A", "Vitamin B", "Vitamin D", "Vitamin C"], c: 2 },
+                { id: "m29", q: "Quốc gia nào có đường bờ biển dài nhất thế giới hiện nay?", a: ["Nga", "Canada", "Úc", "Indonesia"], c: 1 },
+                { id: "m30", q: "Trong cơ thể người, chất khí oxy sau khi hít vào phổi sẽ được vận chuyển chủ yếu nhờ loại tế bào nào trong máu?", a: ["Hồng cầu", "Bạch cầu", "Tiểu cầu", "Kháng thể"], c: 0 },
+                { id: "m31", q: "Đơn vị dùng để đo công suất điện năng tiêu thụ của các thiết bị gia dụng trong gia đình là gì?", a: ["Volt (V)", "Watt (W)", "Amper (A)", "Ohm (Ω)"], c: 1 },
+                { id: "m32", q: "Tác phẩm văn học \"Lão Hạc\" của nhà văn Nam Cao kể về người bạn thân thiết của lão Hạc là một con vật tên gì?", a: ["Cậu Vàng", "Cậu Mực", "Cậu Bống", "Cậu Khoai"], c: 0 },
+                { id: "m33", q: "Lễ hội điện ảnh lớn nhất thế giới được tổ chức thường niên tại thành phố Cannes thuộc quốc gia nào?", a: ["Ý", "Mỹ", "Pháp", "Đức"], c: 2 },
+                { id: "m34", q: "Tỉnh nào sau đây của Việt Nam nổi tiếng với đặc sản Gà nướng Bản Đôn và là thủ phủ cà phê của cả nước?", a: ["Đắk Lắk", "Gia Lai", "Lâm Đồng", "Kon Tum"], c: 0 },
+                { id: "m35", q: "Trong lịch sử, cuộc khởi nghĩa Hai Bà Trưng chống lại ách đô hộ của nhà Đông Hán diễn ra vào năm nào sau Công nguyên?", a: ["Năm 40", "Năm 938", "Năm 542", "Năm 248"], c: 0 },
+                { id: "m36", q: "Thành phố nào là trung tâm kinh tế, chính trị và văn hóa lớn nhất ở khu vực Đồng bằng sông Cửu Long?", a: ["Mỹ Tho", "Cần Thơ", "Long Xuyên", "Cà Mau"], c: 1 },
+                { id: "m37", q: "Trong môn địa lý, hiện tượng 'Trái Đất tự quay quanh trục' theo hướng nào sau đây?", a: ["Từ Tây sang Đông", "Từ Đông sang Tây", "Từ Bắc xuống Nam", "Từ Nam lên Bắc"], c: 0 },
+                { id: "m38", q: "Loại khoáng sản nào được mệnh danh là 'vàng đen', có trữ lượng khai thác lớn nhất tại vùng biển Quảng Ninh?", a: ["Than đá", "Dầu mỏ", "Bauxite", "Sắt"], c: 0 },
+                { id: "m39", q: "Cơ quan nào trong hệ tiêu hóa của con người có chức năng chính là hấp thụ lại nước và cô đặc chất thải?", a: ["Ruột già (Đại tràng)", "Ruột non", "Dạ dày", "Thực quản"], c: 0 },
+                { id: "m40", q: "Nhà thơ nào là tác giả của bài thơ 'Quê hương' nổi tiếng với câu: 'Chim bay dọc biển mang tin cá'?", a: ["Tế Hanh", "Xuân Diệu", "Huy Cận", "Hàn Mặc Tử"], c: 0 },
+                { id: "m41", q: "Đơn vị dùng để đo hiệu điện thế (điện áp) trong hệ đo lường quốc tế là gì?", a: ["Volt (V)", "Ampere (A)", "Ohm (Ω)", "Watt (W)"], c: 0 },
+                { id: "m42", q: "Sông Mê Kông trước khi đổ ra Biển Đông tại Việt Nam được chia thành hai nhánh sông chính nào?", a: ["Sông Tiền và Sông Hậu", "Sông Hồng và Sông Đà", "Sông Đồng Nai và Sông Bé", "Sông Sài Gòn và Sông Vàm Cỏ"], c: 0 },
+                { id: "m43", q: "Hợp chất hóa học nào tạo nên độ chua đặc trưng của quả chanh và các loại trái cây họ cam quýt?", a: ["Acid Citric", "Acid Acetic", "Acid Sulfuric", "Acid Hydrochloric"], c: 0 },
+                { id: "m44", q: "Sự kiện lịch sử 'Chiến thắng Điện Biên Phủ trên không' đánh bại cuộc tập kích bằng máy bay B-52 của Mỹ diễn ra vào năm nào?", a: ["Năm 1972", "Năm 1954", "Năm 1968", "Năm 1975"], c: 0 },
+                { id: "m45", q: "Tỉnh nào của nước ta có đường biên giới đất liền dài nhất giáp với vương quốc Campuchia?", a: ["Long An", "An Giang", "Tây Ninh", "Kiên Giang"], c: 2 },
+                { id: "m46", q: "Quốc gia nào ở khu vực Đông Nam Á có biểu tượng quốc gia là tượng Sư tử biển (Merlion)?", a: ["Singapore", "Malaysia", "Indonesia", "Thái Lan"], c: 0 },
+                { id: "m47", q: "Trong cơ thể người, chất dịch mật đóng vai trò quan trọng trong việc tiêu hóa chất béo được tiết ra từ cơ quan nào?", a: ["Gan", "Dạ dày", "Tuyến tụy", "Ruột non"], c: 0 },
+                { id: "m48", q: "Loại cây công nghiệp lâu năm nào được trồng nhiều nhất ở vùng đất đỏ Nam Bộ và Tây Nguyên để lấy mủ?", a: ["Cây cao su", "Cây cà phê", "Cây hồ tiêu", "Cây điều"], c: 0 },
+                { id: "m49", q: "Đại dương nào có diện tích nhỏ nhất và độ sâu trung bình nông nhất trong số 5 đại dương trên thế giới?", a: ["Bắc Băng Dương", "Ấn Độ Dương", "Đại Tây Dương", "Nam Băng Dương"], c: 0 },
+                { id: "m50", q: "Tác phẩm văn học 'Dế Mèn phiêu lưu ký' của nhà văn Tô Hoài, người bạn đồng hành đầu tiên cùng Dế Mèn đi chu du thiên hạ là ai?", a: ["Dế Trũi", "Chị Cào Cào", "Bọ Ngựa", "Bác Xiến Tóc"], c: 0 },
+                { id: "m51", q: "Trong hóa học, kim loại nào ở điều kiện nhiệt độ phòng (25°C) tồn tại ở trạng thái lỏng duy nhất?", a: ["Thủy ngân (Hg)", "Chì (Pb)", "Sắt (Fe)", "Đồng (Cu)"], c: 0 },
+                { id: "m52", q: "Lễ hội đua thuyền Ngo (Ghe Ngo) là nét văn hóa truyền thống đặc sắc độc đáo của đồng bào dân tộc nào ở Nam Bộ?", a: ["Người Khmer", "Người Chăm", "Người Hoa", "Người Tày"], c: 0 },
+                { id: "m53", q: "Quốc gia nào là quê hương của vũ điệu Samba lôi cuốn và bộ môn nghệ thuật võ thuật Capoeira?", a: ["Brazil", "Argentina", "Tây Ban Nha", "Bồ Đào Nha"], c: 0 },
+                { id: "m54", q: "Hồ nước ngọt tự nhiên nào lớn nhất Việt Nam, nằm trong lõi của một vườn quốc gia cùng tên thuộc tỉnh Bắc Kạn?", a: ["Hồ Ba Bể", "Hồ Thác Bà", "Hồ Hòa Bình", "Hồ Tơ Nưng"], c: 0 },
+                { id: "m55", q: "Tuyến đường giao thông huyết mạch chạy dọc suốt chiều dài đất nước Việt Nam từ Lạng Sơn đến Cà Mau có tên là gì?", a: ["Quốc lộ 1A", "Quốc lộ 14", "Đường Hồ Chí Minh", "Quốc lộ 51"], c: 0 },
+                { id: "m56", q: "Hiện tượng thủy triều trên Trái Đất (nước biển dâng lên và rút xuống) chủ yếu do lực hấp dẫn của thiên thể nào gây ra?", a: ["Mặt Trăng", "Mặt Trời", "Sao Hỏa", "Sao Mộc"], c: 0 },
+                { id: "m57", q: "Nhà văn nào là tác giả của tiểu thuyết 'Đất rừng phương Nam' phản ánh cuộc sống kháng chiến Nam Bộ?", a: ["Đoàn Giỏi", "Nguyễn Quang Sáng", "Sơn Nam", "Anh Đức"], c: 0 },
+                { id: "m58", q: "Loại mô cơ nào cấu tạo nên thành dạ dày, ruột và các mạch máu, hoạt động một cách tự động không theo ý muốn con người?", a: ["Cơ trơn", "Cơ vân", "Cơ tim", "Cơ xương"], c: 0 },
+                { id: "m59", q: "Loại nhạc cụ truyền thống nào của Việt Nam chỉ có duy nhất một dây nhưng có thể phát ra âm thanh trầm bổng đặc trưng?", a: ["Đàn bầu", "Đàn nguyệt", "Đàn tì bà", "Đàn tranh"], c: 0 },
+                { id: "m60", q: "Thành phố cảng nào lớn nhất miền Bắc nước ta, được mệnh danh là 'Thành phố hoa phượng đỏ'?", a: ["Hải Phòng", "Quảng Ninh", "Nam Định", "Thanh Hóa"], c: 0 },
+                { id: "m61", q: "Hiện tượng một chất chuyển trạng thái trực tiếp từ thể rắn sang thể khí mà không qua thể lỏng được gọi là gì?", a: ["Thăng hoa", "Bay hơi", "Ngưng tụ", "Nóng chảy"], c: 0 },
+                { id: "m62", q: "Vị vua cuối cùng của triều đại phong kiến Việt Nam, người đã thoái vị vào tháng 8 năm 1945 là ai?", a: ["Bảo Đại", "Khai Định", "Duy Tân", "Hàm Nghi"], c: 0 },
+                { id: "m63", q: "Quốc gia nào ở khu vực Đông Nam Á hoàn toàn nằm trong nội địa và không giáp với bất kỳ vùng biển nào?", a: ["Lào", "Campuchia", "Myanmar", "Thái Lan"], c: 0 },
+                { id: "m64", q: "Trong hệ tuần hoàn, loại mạch máu nào có nhiệm vụ dẫn máu giàu oxy đi từ tim đến nuôi khắp các cơ quan?", a: ["Động mạch", "Tĩnh mạch", "Mao mạch", "Huyết quản"], c: 0 },
+                { id: "m65", q: "Eo biển nào nối liền giữa Biển Đông và biển Java, nằm giữa hai đảo lớn Sumatra và Java của Indonesia?", a: ["Eo biển Sunda", "Eo biển Malacca", "Eo biển Bering", "Eo biển Magellan"], c: 0 },
+                { id: "m66", q: "Tác phẩm văn học 'Lão Hạc' của nhà văn Nam Cao, nhân vật Lão Hạc đã nuôi một chú chó được lão gọi bằng tên gì?", a: ["Cậu Vàng", "Cậu Mực", "Cậu Bông", "Cậu Đốm"], c: 0 },
+                { id: "m67", q: "Hợp chất khí nào được giải phóng ra từ quá trình quang hợp của cây xanh vào ban ngày dưới ánh sáng mặt trời?", a: ["Khí Oxy (O2)", "Khí Cacbonic (CO2)", "Khí Nitơ (N2)", "Khí Hydro (H2)"], c: 0 },
+                { id: "m68", q: "Giải đấu bóng đá lớn nhất hành tinh dành cho các đội tuyển quốc gia (World Cup) được tổ chức định kỳ mấy năm một lần?", a: ["4 năm", "2 năm", "3 năm", "5 năm"], c: 0 },
+                { id: "m69", q: "Tỉnh nào ở vùng Đông Nam Bộ nước ta nổi tiếng với hồ thủy nhân tạo Trị An và thánh địa của bưởi Tân Triều?", a: ["Đồng Nai", "Bình Dương", "Bà Rịa - Vũng Tàu", "Tây Ninh"], c: 0 },
+                { id: "m70", q: "Đơn vị dùng để đo công suất trong hệ đo lường quốc tế (SI) mang tên nhà bác học James Watt là gì?", a: ["Watt (W)", "Joule (J)", "Volt (V)", "Newton (N)"], c: 0 },
+                { id: "m71", q: "Vịnh biển nào của Việt Nam hai lần được UNESCO công nhận là Di sản thiên nhiên thế giới nhờ giá trị cảnh quan và địa chất?", a: ["Vịnh Hạ Long", "Vịnh Lăng Cô", "Vịnh Nha Trang", "Vịnh Xuân Đài"], c: 0 },
+                { id: "m72", q: "Chất khí nào chiếm tỉ lệ thể tích lớn thứ hai trong bầu khí quyển Trái Đất (sau khí Nitơ) với khoảng 21%?", a: ["Khí Oxy", "Khí Argon", "Khí Cacbonic", "Khí Helium"], c: 0 },
+                { id: "m73", q: "Truyện ngụ ngôn nổi tiếng 'Thầy bói xem voi' phê phán sai lầm nào của con người trong nhận thức thực tế?", a: ["Phiến diện, nhìn nhận một góc rồi đánh giá toàn thể", "Lười biếng, không chịu tìm tòi học hỏi", "Kiêu ngạo, xem thường ý kiến người khác", "Nhút nhát, không dám nói lên sự thật"], c: 0 }
             ],
             hard: [
-                // >>> DÁN CÁC CÂU HỎI HARD KHÁC VÀO ĐÂY
-                { id: "h77", q: "Ngôi sao nào là ngôi sao sáng nhất trên bầu trời đêm khi quan sát từ Trái Đất?", a: ["Sao Thiên Lang (Sirius)", "Sao Bắc Cực (Polaris)", "Sao Chức Nữ (Vega)", "Sao Đại Hùng"], c: 0 },
+                { id: "h1", q: "Loài cây nào sau đây được biết đến là loài thực vật ăn thịt, có khả năng bẫy và tiêu hóa các loại côn trùng nhỏ?", a: ["Cây bắt ruồi (bẫy kẹp)", "Cây trinh nữ (xấu hổ)", "Cây hoa đá", "Cây xương rồng"], c: 0 },
+                { id: "h2", q: "Hiện tượng các mảng kiến tạo của vỏ Trái Đất đột ngột dịch chuyển mạnh tạo ra các sóng địa chấn trên bề mặt được gọi là gì?", a: ["Động đất", "Núi lửa phun trào", "Sóng thần", "Lốc xoáy"], c: 0 },
+                { id: "h3", q: "Chất nào chiếm phần lớn khối lượng của một quả dưa hấu chín (khoảng trên 90%)?", a: ["Nước", "Đường", "Chất xơ", "Vitamin C"], c: 0 },
+                { id: "h4", q: "Hiện tượng \"Thủy triều đỏ\" xảy ra trên biển là do sự bùng nổ số lượng quá mức của loài sinh vật nào?", a: ["Tảo biển", "Sứa biển", "San hô", "Cá hồi"], c: 0 },
+                { id: "h5", q: "Ở điều kiện áp suất khí quyển tiêu chuẩn, nước nguyên chất sẽ sôi ở nhiệt độ bao nhiêu độ Celsius (°C)?", a: ["100 °C", "0 °C", "50 °C", "120 °C"], c: 0 },
+                { id: "h6", q: "Quốc gia nào sau đây có diện tích đất liền lớn nhất thế giới hiện nay?", a: ["Nga", "Canada", "Mỹ", "Trung Quốc"], c: 0 },
+                { id: "h7", q: "Quốc gia nào ở khu vực Nam Mỹ là nước duy nhất sử dụng tiếng Bồ Đào Nha làm ngôn ngữ chính thức?", a: ["Brazil", "Argentina", "Chile", "Colombia"], c: 0 },
+                { id: "h8", q: "Trong lịch sử phong kiến Việt Nam, vị vua nào dưới triều Nguyễn đã tự mình cho đúc bộ \"Cửu Đỉnh\" bằng đồng đặt trước Thế Miếu ở kinh thành Huế?", a: ["Vua Minh Mạng", "Vua Gia Long", "Vua Thiệu Trị", "Vua Tự Đức"], c: 0 },
+                { id: "h9", q: "Định luật vật lý nào khẳng định: \"Lực tương tác giữa hai điện tích điểm tỉ lệ thuận với tích độ lớn của hai điện tích và tỉ lệ nghịch với bình phương khoảng cách giữa chúng\"?", a: ["Định luật Coulomb (Cu-lông)", "Định luật Newton", "Định luật Ohm", "Định luật Faraday"], c: 0 },
+                { id: "h10", q: "Ai là tác giả của bức tranh sơn dầu nổi tiếng mang tên \"Thiếu nữ bên hoa huệ\" (sáng tác năm 1943)?", a: ["Họa sĩ Tô Ngọc Vân", "Họa sĩ Trần Văn Cẩn", "Họa sĩ Nguyễn Gia Trí", "Họa sĩ Bùi Xuân Phái"], c: 0 },
+                { id: "h11", q: "Tác phẩm văn học \"Dế Mèn phiêu lưu ký\" của nhà văn Tô Hoài được xuất bản lần đầu tiên đầy đủ vào năm nào?", a: ["Năm 1941", "Năm 1945", "Năm 1954", "Năm 1960"], c: 0 },
+                { id: "h12", q: "Trong lịch sử phong kiến Việt Nam, vị vua nào đã quyết định đổi tên nước từ Đại Cồ Việt thành Đại Việt và dời đô về Thăng Long?", a: ["Lý Công Uẩn (Vua Lý Thái Tổ)", "Đinh Bộ Lĩnh", "Lê Hoàn", "Trần Thừa"], c: 0 },
+                { id: "h13", q: "Hiện tượng các hạt phấn hoa chuyển động hỗn độn không ngừng trong nước do va chạm với các phân tử nước được gọi là chuyển động gì?", a: ["Chuyển động Brown (Bơ-raon)", "Chuyển động tịnh tiến", "Chuyển động quán tính", "Chuyển động sóng"], c: 0 },
+                { id: "h14", q: "Ai là kiến trúc sư người Pháp đã thiết kế công trình Nhà hát Lớn Hà Nội (khánh thành năm 1911)?", a: ["Broyer và V. Harley", "Paul Doumer", "Ernest Hébrard", "Auguste Henri Vildieu"], c: 0 },
+                { id: "h15", q: "Ai là người đầu tiên cắm lá cờ cách mạng lên nóc Dinh Độc Lập vào trưa ngày 30/4/1975?", a: ["Bùi Quang Thận", "Vũ Đăng Toàn", "Nguyễn Văn Tập", "Lê Văn Phượng"], c: 0 },
+                { id: "h16", q: "Trong lịch sử Việt Nam, triều đại phong kiến nào đã tổ chức nhiều khoa thi tiến sĩ nhất và dựng bia tiến sĩ tại Văn Miếu?", a: ["Nhà Hậu Lê", "Nhà Lý", "Nhà Trần", "Nhà Nguyễn"], c: 0 },
+                { id: "h17", q: "Định luật vật lý nào phát biểu rằng: \"Dòng điện cảm ứng xuất hiện trong mạch kín có chiều sao cho từ trường do nó sinh ra có tác dụng chống lại sự biến thiên từ thông sinh ra nó\"?", a: ["Định luật Lenz (Len-xơ)", "Định luật Faraday", "Định luật Ampere", "Định luật Joule - Lenz"], c: 0 },
+                { id: "h18", q: "Ai là tác giả của tiểu thuyết kinh điển \"Những người khốn khổ\" (Les Misérables) trong nền văn học Pháp?", a: ["Victor Hugo", "Alexandre Dumas", "Honoré de Balzac", "Gustave Flaubert"], c: 0 },
+                { id: "h19", q: "Bản hiến pháp đầu tiên của nước Việt Nam Dân chủ Cộng hòa được Quốc hội thông qua vào năm nào?", a: ["Năm 1946", "Năm 1945", "Năm 1954", "Năm 1959"], c: 0 },
+                { id: "h20", q: "Trong lịch sử phong kiến Việt Nam, triều đại nào đã cho phát hành tiền giấy đầu tiên mang tên \"Thông bảo hội sao\"?", a: ["Nhà Hồ", "Nhà Trần", "Nhà Lê sơ", "Nhà Tây Sơn"], c: 0 },
+                { id: "h21", q: "Ai là nhạc sĩ Việt Nam đầu tiên được trao tặng Giải thưởng Quốc tế Quỹ học bổng nghệ thuật múa và âm nhạc tại Nhật Bản (2004)?", a: ["Nhạc sĩ Trịnh Công Sơn", "Nhạc sĩ Đặng Thái Sơn", "Nhạc sĩ Văn Cao", "Nhạc sĩ Trần Tiến"], c: 0 },
+                { id: "h22", q: "Sự kiện Bác Hồ đọc bản Tuyên ngôn Độc lập ngày 2/9/1945 diễn ra tại địa điểm nào trước khi được gọi là Quảng trường Ba Đình?", a: ["Vườn hoa Puginier", "Phủ Toàn quyền Đông Dương", "Chợ Đồng Xuân", "Quảng trường Cách mạng Tháng Tám"], c: 0 },
+                { id: "h23", q: "Theo Thần thoại Hy Lạp, vị thần nào được coi là thần bảo hộ của thợ rèn, nghệ nhân, nhà điêu khắc và lửa núi lửa?", a: ["Hephaestus", "Ares", "Hermes", "Apollo"], c: 0 },
+                { id: "h24", q: "Dưới triều đại phong kiến nào trong lịch sử Việt Nam, khoa thi chọn Trạng nguyên đầu tiên chính thức được tổ chức?", a: ["Nhà Trần", "Nhà Đinh", "Nhà Lý", "Nhà Hậu Lê"], c: 0 },
+                { id: "h25", q: "Loại thảm thực vật đặc trưng gồm các đồng cỏ cao kết hợp với cây bụi rải rác ở vùng khí hậu nhiệt đới khô được gọi là gì?", a: ["Savan (Xavan)", "Thảo nguyên", "Đài nguyên", "Rừng rậm ôn đới"], c: 0 },
+                { id: "h26", q: "Định luật Vạn vật hấp dẫn của nhà bác học Isaac Newton phát biểu rằng lực hấp dẫn giữa hai vật tỉ lệ nghịch với đại lượng nào?", a: ["Bình phương khoảng cách giữa hai vật", "Khoảng cách giữa hai vật", "Tổng khối lượng hai vật", "Tích khối lượng hai vật"], c: 0 },
+                { id: "h27", q: "Ai là người đầu tiên đoạt giải Nobel Văn học của châu Á (được trao vào năm 1913)?", a: ["Rabindranath Tagore", "Lỗ Tấn", "Yasunari Kawabata", "Mạc Ngôn"], c: 0 },
+                { id: "h28", q: "Hồ nước nào sâu nhất thế giới và đồng thời là hồ chứa nước ngọt có thể tích lớn nhất hành tinh?", a: ["Hồ Baikal", "Hồ Superior", "Hồ Caspian (Biển Caspi)", "Hồ Victoria"], c: 0 },
+                { id: "h29", q: "Trong lịch sử y học thế giới, nhà khoa học Alexander Fleming đã tình cờ phát hiện ra penicillin từ loài sinh vật nào?", a: ["Nấm mốc (Penicillium notatum)", "Vi khuẩn đường ruột", "Rêu rừng", "Tảo đỏ"], c: 0 },
+                { id: "h30", q: "Vị vua nào dưới triều đại nhà Lê đã thành lập hội thơ \"Tao đàn Nhị thập bát Tú\"?", a: ["Lê Thánh Tông", "Lê Thái Tổ", "Lê Thái Tông", "Lê Hiến Tông"], c: 0 },
+                { id: "h31", q: "Hiện tượng \"Băng trôi\" trên đại dương xảy ra phần lớn là do mật độ khối lượng của băng đá như thế nào so với nước lỏng?", a: ["Nhỏ hơn nước lỏng", "Lớn hơn nước lỏng", "Bằng với nước lỏng", "Biến đổi liên tục"], c: 0 },
+                { id: "h32", q: "Thác nước Iguazu – một trong những kỳ quan thiên nhiên vĩ đại nhất thế giới – nằm trên đường biên giới của hai quốc gia nào?", a: ["Brazil và Argentina", "Mỹ và Canada", "Zambia và Zimbabwe", "Venezuela và Colombia"], c: 0 },
+                { id: "h33", q: "Trong Thần thoại Hy Lạp, vị thần nào là thần cai quản thời gian và là cha của thần Zeus?", a: ["Cronus", "Uranus", "Poseidon", "Hades"], c: 0 },
+                { id: "h34", q: "Ai là nhà khoa học đầu tiên tìm ra cấu trúc chuỗi xoắn kép của phân tử ADN vào năm 1953?", a: ["James Watson", "Gregor Mendel", "Louis Pasteur", "Thomas Morgan"], c: 0 },
+                { id: "h35", q: "Triều đại phong kiến nào dài nhất trong lịch sử chính thống của Việt Nam?", a: ["Nhà Hậu Lê", "Nhà Lý", "Nhà Trần", "Nhà Nguyễn"], c: 0 },
+                { id: "h36", q: "Điểm cực Đông trên đất liền của Việt Nam nằm ở mũi đôi thuộc địa phận của tỉnh nào?", a: ["Khánh Hòa", "Bình Định", "Phú Yên", "Ninh Thuận"], c: 0 },
+                { id: "h37", q: "Bức tranh \"Tiếng thét\" (The Scream) – một trong những kiệt tác nghệ thuật biểu hiện nổi tiếng nhất thế giới – là của họa sĩ nào?", a: ["Edvard Munch", "Vincent van Gogh", "Pablo Picasso", "Claude Monet"], c: 0 },
+                { id: "h38", q: "Nguyên tố hóa học nào phổ biến thứ hai (sau Oxy) xét về hàm lượng cấu tạo nên vỏ Trái Đất?", a: ["Silicon (Si)", "Sắt (Fe)", "Nhôm (Al)", "Carbon (C)"], c: 0 },
+                { id: "h39", q: "Trong văn học Nga, tác phẩm kinh điển \"Chiến tranh và Hòa bình\" (War and Peace) là của đại văn hào nào?", a: ["Leo Tolstoy", "Fyodor Dostoevsky", "Anton Chekhov", "Alexander Pushkin"], c: 0 },
+                { id: "h40", q: "Vị vua nào của triều đại nhà Trần đã hai lần trực tiếp lãnh đạo quân dân đại phá quân Nguyên Mông và sau này đi tu lập ra Thiền phái Trúc Lâm Yên Tử?", a: ["Vua Trần Nhân Tông", "Vua Trần Thánh Tông", "Vua Trần Thái Tông", "Vua Trần Anh Tông"], c: 0 },
+                { id: "h41", q: "Hạt nào trong cấu tạo nguyên tử mang điện tích dương và quyết định số hiệu nguyên tố trong bảng tuần hoàn?", a: ["Proton", "Electron", "Neutron", "Positron"], c: 0 },
+                { id: "h42", q: "Eo biển nào là ranh giới hàng hải chiến lược cực kỳ bận rộn nối liền giữa Ấn Độ Dương và Biển Đông, nằm giữa Indonesia và Malaysia?", a: ["Eo biển Malacca", "Eo biển Sunda", "Eo biển Lombok", "Eo biển Makassar"], c: 0 },
+                { id: "h43", q: "Danh họa người Hà Lan Vincent van Gogh đã tự tay sáng tác kiệt tác hội họa 'Hoa hướng dương' (Sunflowers) tại thành phố nào của nước Pháp?", a: ["Arles", "Paris", "Marseille", "Lyon"], c: 0 },
+                { id: "h44", q: "Ai là người sáng lập ra vương triều nhà Tây Sơn, tự mình lên ngôi hoàng đế lấy niên hiệu là Thái Đức?", a: ["Nguyễn Nhạc", "Nguyễn Huệ", "Nguyễn Lữ", "Nguyễn Ánh"], c: 0 },
+                { id: "h45", q: "Định luật vật lý nào phát biểu rằng: 'Áp suất tác dụng lên một chất lỏng chứa trong bình kín được truyền nguyên vẹn theo mọi hướng'?", a: ["Định luật Pascal", "Định luật Archimedes", "Định luật Bernoulli", "Định luật Boyle-Mariotte"], c: 0 },
+                { id: "h46", q: "Sự kiện lịch sử 'Bác Hồ ra đi tìm đường cứu nước' diễn ra tại bến cảng Nhà Rồng vào ngày tháng năm nào?", a: ["Ngày 5 tháng 6 năm 1911", "Ngày 2 tháng 9 năm 1945", "Ngày 19 tháng 5 năm 1890", "Ngày 3 tháng 2 năm 1930"], c: 0 },
+                { id: "h47", q: "Hệ sinh thái rừng nào lớn nhất thế giới, được mệnh danh là 'lá phổi xanh của hành tinh' nhờ khả năng hấp thụ lượng lớn khí carbon?", a: ["Rừng mưa nhiệt đới Amazon", "Rừng Taiga vùng Siberia", "Rừng ngập mặn Sundarbans", "Rừng ôn đới Congo"], c: 0 },
+                { id: "h48", q: "Tác phẩm văn học 'Truyện Kiều' của đại thi hào Nguyễn Du được viết dựa trên cốt truyện của tác phẩm tiểu thuyết Trung Quốc nào?", a: ["Kim Vân Kiều truyện", "Hồng Lâu Mộng", "Thủy Hử", "Tây Du Ký"], c: 0 },
+                { id: "h49", q: "Hiện tượng một số chất tự phát ra các tia năng lượng cao do sự phân rã không ổn định của hạt nhân được gọi là hiện tượng gì?", a: ["Phóng xạ", "Quang điện", "Cảm ứng điện từ", "Bức xạ nhiệt"], c: 0 },
+                { id: "h50", q: "Trong lịch sử triết học, ai là người được mệnh danh là 'Cha đẻ của triết học phương Tây' với câu nói kinh điển 'Tôi tư duy, nên tôi tồn tại'?", a: ["René Descartes", "Immanuel Kant", "Socrates", "Friedrich Nietzsche"], c: 0 },
+                { id: "h51", q: "Hồ nước mặn lớn nhất thế giới xét về diện tích bề mặt, nằm giữa ranh giới hai châu lục Á và Âu có tên gọi là gì?", a: ["Biển Caspi (Caspian Sea)", "Biển Chết", "Hồ Baikal", "Hồ Aral"], c: 0 },
+                { id: "h52", q: "Ai là nhà khoa học đầu tiên đề xuất Thuyết tiến hóa bằng con đường chọn lọc tự nhiên trong tác phẩm 'Nguồn gốc các loài' (1859)?", a: ["Charles Darwin", "Gregor Mendel", "Jean-Baptiste Lamarck", "Alfred Wallace"], c: 0 },
+                { id: "h53", q: "Công trình kiến trúc cổ đại 'Đấu trường La Mã' (Colosseum) được xây dựng dưới thời hoàng đế nào của đế quốc La Mã?", a: ["Hoàng đế Vespasian", "Hoàng đế Nero", "Hoàng đế Augustus", "Hoàng đế Julius Caesar"], c: 0 },
+                { id: "h54", q: "Vị trạng nguyên nào trong lịch sử nước ta nổi tiếng với tài ngoại giao bộc trực, được mệnh danh là 'Lưỡng quốc Trạng nguyên'?", a: ["Mạc Đĩnh Chi", "Nguyễn Hiền", "Lương Thế Vinh", "Lê Quý Đôn"], c: 0 },
+                { id: "h55", q: "Hiện tượng khúc xạ ánh sáng qua các lớp không khí có mật độ nhiệt độ khác nhau gần mặt đất tạo ra hình ảnh ảo giác nguồn nước được gọi là gì?", a: ["Ảo ảnh (Mirage)", "Cầu vồng", "Tán sắc", "Quang cực"], c: 0 },
+                { id: "h56", q: "Ai là tác giả của vở nhạc kịch opera kinh điển 'Cây sáo thần' (The Magic Flute) sáng tác năm 1791?", a: ["Wolfgang Amadeus Mozart", "Ludwig van Beethoven", "Johann Sebastian Bach", "Franz Schubert"], c: 0 },
+                { id: "h57", q: "Nguyên tố hóa học nào được sử dụng làm chất bán dẫn cốt lõi để chế tạo các chip vi xử lý trong hầu hết đồ điện tử hiện nay?", a: ["Silicon (Si)", "Germanium (Ge)", "Carbon (C)", "Đồng (Cu)"], c: 0 },
+                { id: "h58", q: "Tập bản đồ địa lý và hành chính chính thức đầu tiên của Việt Nam do triều Nguyễn biên soạn dưới thời vua Minh Mạng có tên là gì?", a: ["Đại Nam nhất thống toàn đồ", "Hồng Đức bản đồ", "Thiên Nam tứ chí lộ đồ", "Địa bạ triều Nguyễn"], c: 0 },
+                { id: "h59", q: "Theo Thần thoại Hy Lạp, vị thần nào là nữ thần bảo hộ của trí tuệ, nghệ thuật và chiến tranh chính nghĩa?", a: ["Athena", "Aphrodite", "Artemis", "Hera"], c: 0 },
+                { id: "h60", q: "Hành tinh nào trong Hệ Mặt Trời sở hữu ngọn núi lửa khổng lồ mang tên 'Olympus Mons' - ngọn núi lửa lớn nhất từng được phát hiện?", a: ["Sao Hỏa", "Sao Kim", "Sao Mộc", "Sao Thổ"], c: 0 },
+                { id: "h61", q: "Ai là nhà khoa học đầu tiên tìm ra thuốc kháng sinh Penicillin vào năm 1928, mở ra bước ngoặt vĩ đại cứu sống hàng triệu người trong y học?", a: ["Alexander Fleming", "Louis Pasteur", "Robert Koch", "Edward Jenner"], c: 0 },
+                { id: "h62", q: "Eo biển nào hẹp nhất thế giới nằm ở Thổ Nhĩ Kỳ, ngăn cách phần châu Á và châu Âu của thành phố Istanbul lịch sử?", a: ["Eo biển Bosphorus", "Eo biển Gibraltar", "Eo biển Bering", "Eo biển Malacca"], c: 0 },
+                { id: "h63", q: "Bức tranh nghệ thuật biểu hiện nổi tiếng 'Tiếng thét' (The Scream) với bầu trời đỏ rực là kiệt tác của họa sĩ nước nào?", a: ["Na Uy (Edvard Munch)", "Hà Lan (Rembrandt)", "Tây Ban Nha (Picasso)", "Pháp (Monet)"], c: 0 },
+                { id: "h64", q: "Dưới triều đại phong kiến phong kiến nào ở nước ta, kỳ thi Nho học đầu tiên được tổ chức để tuyển chọn nhân tài vào năm 1075?", a: ["Nhà Lý", "Nhà Trần", "Nhà Đinh", "Nhà Tiền Lê"], c: 0 },
+                { id: "h65", q: "Hiệu ứng vật lý nào giải thích nguyên lý tạo ra lực nâng của cánh máy bay dựa trên sự chênh lệch áp suất và vận tốc dòng khí?", a: ["Hiệu ứng Bernoulli", "Hiệu ứng Doppler", "Hiệu ứng Tyndall", "Hiệu ứng Joule-Thomson"], c: 0 },
+                { id: "h66", q: "Quốc gia nào ở khu vực Nam Mỹ là quốc gia duy nhất sử dụng tiếng Bồ Đào Nha làm ngôn ngữ chính thức?", a: ["Brazil", "Argentina", "Colombia", "Peru"], c: 0 },
+                { id: "h67", q: "Loại tế bào nào trong máu của cơ thể người có kích thước rất nhỏ, không nhân và đóng vai trò cốt lõi trong quá trình đông máu?", a: ["Tiểu cầu", "Hồng cầu", "Bạch cầu Lympho", "Bạch cầu trung tính"], c: 0 },
+                { id: "h68", q: "Tác phẩm văn học kinh điển 'Đôn Ki-hô-tê - Nhà quý tộc tài ba xứ Mancha' của văn hào Miguel de Cervantes thuộc nền văn học nước nào?", a: ["Tây Ban Nha", "Bồ Đào Nha", "Pháp", "Ý"], c: 0 },
+                { id: "h69", q: "Chu kỳ biến đổi chuyển động tự quay quanh trục của Trái Đất (gọi là hiện tượng tiến động) mất khoảng bao nhiêu năm để hoàn thành một vòng?", a: ["Khoảng 26.000 năm", "Khoảng 12.000 năm", "Khoảng 50.000 năm", "Khoảng 100.000 năm"], c: 0 },
+                { id: "h70", q: "Nhà toán học cổ đại nào là tác giả của tác phẩm 'Cơ sở' (Elements) đặt nền móng toàn diện cho bộ môn Hình học phẳng?", a: ["Euclid", "Pythagoras", "Thales", "Archimedes"], c: 0 },
+                { id: "h71", q: "Trong bảng tuần hoàn hóa học, nguyên tố phi kim nào phổ biến nhất trong cấu trúc vỏ Trái Đất, chiếm gần một nửa khối lượng?", a: ["Oxy (O)", "Silicon (Si)", "Carbon (C)", "Hydro (H)"], c: 0 },
+                { id: "h72", q: "Trận chiến thủy chiến lừng lẫy nào trên sông Bạch Đằng do Trần Hưng Đạo tổng chỉ huy đã nhấn chìm toàn bộ chiến thuyền quân Nguyên Mông năm 1288?", a: ["Trận Bạch Đằng năm 1288", "Trận Bạch Đằng năm 938", "Trận Bạch Đằng năm 981", "Trận Rạch Gầm - Xoài Mút"], c: 0 },
+                { id: "h73", q: "Đại dương nào có độ sâu trung bình lớn nhất thế giới và bao trọn 'Vòng đai lửa' với hoạt động địa chất, động đất dữ dội?", a: ["Thái Bình Dương", "Đại Tây Dương", "Ấn Độ Dương", "Bắc Băng Dương"], c: 0 },
+                { id: "h74", q: "Bức tranh lãng mạn dát vàng nổi tiếng thế giới mang tên 'Nụ hôn' (The Kiss) là kiệt tác của họa sĩ nước nào?", a: ["Áo (Gustav Klimt)", "Đức (Albrecht Dürer)", "Pháp (Edgar Degas)", "Ý (Modigliani)"], c: 0 },
+                { id: "h75", q: "Độc tố cực mạnh 'Tetrodotoxin' gây tê liệt thần kinh cơ thể người thường được tìm thấy nhiều nhất ở cơ quan nào của loài cá nào?", a: ["Gan và trứng cá nóc", "Mật cá trắm", "Tuyến nước bọt bạch tuộc", "Gai lưng cá mặt quỷ"], c: 0 },
+                { id: "h76", q: "Vị hoàng đế nào của Việt Nam đã ban chiếu lập 'Học sùng chính' và mời danh sĩ Nguyễn Thiếp đứng ra gánh vác việc chấn hưng giáo dục nước nhà?", a: ["Quang Trung (Nguyễn Huệ)", "Lê Thánh Tông", "Minh Mạng", "Gia Long"], c: 0 },
+                { id: "h77", q: "Nguyên tố nào có độ âm điện lớn nhất trong bảng tuần hoàn hóa học?", a: ["Flo (F)", "Oxy (O)", "Clo (Cl)", "Cacbon (C)"], c: 0 },
                 { id: "h78", q: "Tiểu thuyết bi kịch tình yêu kinh điển 'Đồi gió hú' (Wuthering Heights) là tác phẩm văn học duy nhất của nữ nhà văn nào?", a: ["Emily Brontë", "Charlotte Brontë", "Anne Brontë", "Mary Shelley"], c: 0 },
-                { id: "h79", q: "Trong lịch sử khoa bảng Việt Nam, vị danh nhân nào được mệnh danh là 'Tam Nguyên Yên Đổ'?", a: ["Nguyễn Khuyến", "Trần Tế Xương", "Lê Quý Đôn", "Cao Bá Quát"], c: 0 }
+                { id: "h79", q: "Trong lịch sử khoa bảng Việt Nam, vị danh nhân nào được mệnh danh là 'Tam Nguyên Yên Đổ' do đỗ thủ khoa cả 3 kỳ thi dưới triều Nguyễn?", a: ["Nguyễn Khuyến", "Trần Tế Xương", "Lê Quý Đôn", "Cao Bá Quát"], c: 0 }
             ],
             extreme: [
-                // >>> DÁN MẢNG EXTREME CỦA BẠN VÀO ĐÂY
-                { id: "ex1", q: "Ai là vị nữ vương đầu tiên và duy nhất lãnh đạo bộ tộc trong lịch sử cổ đại?", a: ["Trưng Trắc", "Triệu Thị Trinh", "Lý Chiêu Hoàng", "Ỷ Lan"], c: 2 }
+                { id: "ex1", q: "Ai là vị nữ vương đầu tiên và duy nhất lãnh đạo một triều đại phong kiến chính thống trong lịch sử Việt Nam?", a: ["Lý Chiêu Hoàng", "Hai Bà Trưng", "Bà Triệu", "Nguyên phi Ỷ Lan"], c: 0 },
+                { id: "ex2", q: "Đại thắng mùa Xuân năm 1975 chính thức kết thúc thắng lợi trọn vẹn vào ngày tháng năm nào, giải phóng hoàn toàn miền Nam và thống nhất đất nước?", a: ["Ngày 30 tháng 4 năm 1975", "Ngày 29 tháng 3 năm 1975", "Ngày 19 tháng 5 năm 1975", "Ngày 29 tháng 9 năm 1975"], c: 0 },
+                { id: "ex3", q: "Địa danh lịch sử nào tại Thành phố Hồ Chí Minh là nơi xe tăng của Quân giải phóng húc đổ cổng dinh bộc lộ thời khắc đầu hàng của chính quyền Sài Gòn cũ?", a: ["Dinh Độc Lập", "Bến Nhà Rồng", "Chợ Bến Thành", "Nhà hát Lớn"], c: 0 },
+                { id: "ex4", q: "Chiến dịch giải phóng Sài Gòn - Gia Định trong cuộc tổng tiến công năm 1975 chính thức được Bộ Chính trị phê chuẩn mang tên vị lãnh tụ vĩ đại nào của dân tộc?", a: ["Chiến dịch Hồ Chí Minh", "Chiến dịch Điện Biên Phủ", "Chiến dịch Quang Trung", "Chiến dịch Trần Hưng Đạo"], c: 0 },
+                { id: "ex5", q: "Tỉnh nào ở vùng Tây Bắc nước ta sở hữu đèo Pha Đin – một trong \"Tứ đại đỉnh đèo\" hiểm trở và là tuyến đường huyết mạch tiếp tế cho mặt trận Điện Biên Phủ xưa?", a: ["Điện Biên (giáp ranh Sơn La)", "Lào Cai", "Hà Giang", "Nghệ An"], c: 0 },
+                { id: "ex6", q: "Hành tinh nào trong Hệ Mặt Trời có thời gian một ngày (chu kỳ tự quay) dài hơn một năm của chính nó (chu kỳ quỹ đạo quanh Mặt Trời)?", a: ["Sao Kim", "Sao Hỏa", "Sao Thủy", "Sao Mộc"], c: 0 },
+                { id: "ex7", q: "Địa danh nào sau đây được xếp vào một trong \"Tứ đại đỉnh đèo\" hiểm trở nhất vùng Tây Bắc Việt Nam bên cạnh Mã Pí Lèng, Ô Quy Hồ và Pha Đin?", a: ["Đèo Khau Phạ", "Đèo Ngang", "Đèo Hải Vân", "Đèo Cả"], c: 0 }
             ]
         };
 
         const milestones = ["200.000", "400.000", "600.000", "1.000.000", "2.000.000", "3.000.000", "6.000.000", "10.000.000", "14.000.000", "22.000.000", "30.000.000", "40.000.000", "60.000.000", "85.000.000", "150.000.000"];
-        let currentLevel = 1, currentQuestion = null, timerInterval = null, timeLeft = 30;
+        let currentLevel = 1;
+        let currentQuestion = null;
+        let timerInterval = null;
+        let timeLeft = 30;
+        let usedQuestions = []; // Tránh trùng lặp câu hỏi vừa chơi
 
-        function buildMoneySidebar() {
-            const container = document.getElementById('sidebar');
-            container.innerHTML = '';
-            milestones.forEach((money, idx) => {
-                const levelNum = idx + 1;
+        // Khởi tạo tháp tiền bên sidebar hữu ngạn
+        function buildMoneyLadder() {
+            const ladder = document.getElementById('money-ladder-ui');
+            ladder.innerHTML = '';
+            milestones.forEach((amount, index) => {
+                const step = index + 1;
                 const div = document.createElement('div');
-                div.id = `milestone-${levelNum}`;
-                div.className = 'milestone';
-                if (levelNum === 5 || levelNum === 10 || levelNum === 15) div.classList.add('important');
-                div.innerHTML = `<span>${levelNum}</span> <span>${money}</span>`;
-                container.appendChild(div);
+                div.id = `ladder-item-${step}`;
+                div.className = 'ladder-item';
+                if (step === 5 || step === 10 || step === 15) {
+                    div.classList.add('milestone');
+                }
+                div.innerHTML = `<span>${step}</span> <span>${amount}</span>`;
+                ladder.appendChild(div);
             });
         }
 
-        document.getElementById('btn-start').addEventListener('click', function() {
-            document.getElementById('start-modal').style.display = 'none';
-            buildMoneySidebar();
-            loadNewQuestion();
-        });
+        function initGame() {
+            document.getElementById('game-modal').style.display = 'none';
+            buildMoneyLadder();
+            currentLevel = 1;
+            usedQuestions = [];
+            // Reset các nút trợ giúp trực quan
+            ['wrap-5050', 'wrap-call', 'wrap-audience', 'wrap-expert'].forEach(id => {
+                document.getElementById(id).classList.remove('used');
+                document.getElementById(id).querySelector('button').disabled = false;
+            });
+            loadQuestion();
+        }
 
-        function loadNewQuestion() {
+        function startTimer() {
             clearInterval(timerInterval);
-            resetAnswerButtons();
-            document.getElementById('help-output').innerHTML = "Hệ thống trợ giúp đã sẵn sàng.";
-            
-            document.querySelectorAll('.milestone').forEach(el => el.classList.remove('active'));
-            const activeMilestone = document.getElementById(`milestone-${currentLevel}`);
-            if (activeMilestone) activeMilestone.classList.add('active');
-
-            let pool = currentLevel <= 5 ? questionBank.easy : currentLevel <= 10 ? questionBank.medium : currentLevel <= 14 ? questionBank.hard : questionBank.extreme;
-            currentQuestion = pool[Math.floor(Math.random() * pool.length)];
-
-            document.getElementById('question').innerText = `Câu ${currentLevel}: ${currentQuestion.q}`;
-            for (let i = 0; i < 4; i++) {
-                const prefix = ["A. ", "B. ", "C. ", "D. "][i];
-                const btn = document.getElementById(`ans-${i}`);
-                btn.innerText = prefix + currentQuestion.a[i];
-                btn.style.visibility = 'visible';
-                btn.disabled = false;
-            }
-
             timeLeft = 30;
-            document.getElementById('timer').innerText = timeLeft;
+            updateTimerUI();
+            
             timerInterval = setInterval(() => {
                 timeLeft--;
-                document.getElementById('timer').innerText = timeLeft;
+                updateTimerUI();
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    alert("Hết giờ!");
-                    location.reload();
+                    showEndModal("HẾT GIỜ!", `Thời gian suy nghĩ đã hết. Bạn dừng cuộc chơi tại câu số ${currentLevel} với mốc tiền thưởng tương ứng.`);
                 }
             }, 1000);
+        }
+
+        function updateTimerUI() {
+            document.getElementById('timer-countdown').innerText = timeLeft;
+            const percentage = (timeLeft / 30) * 100;
+            document.getElementById('timer-bar').style.width = `${percentage}%`;
+        }
+
+        function loadQuestion() {
+            hideHelpPanel();
+            resetAnswerCards();
+
+            // Cập nhật Highlight tháp tiền thưởng
+            document.querySelectorAll('.ladder-item').forEach(el => el.classList.remove('active'));
+            const currentItem = document.getElementById(`ladder-item-${currentLevel}`);
+            if (currentItem) currentItem.classList.add('active');
+
+            // Xác định chặng và mức tiền thưởng hiện tại
+            let pool = [];
+            if (currentLevel <= 5) {
+                document.getElementById('stage-text').innerText = "Chặng 1: Khởi động";
+                pool = questionBank.easy;
+            } else if (currentLevel <= 10) {
+                document.getElementById('stage-text').innerText = "Chặng 2: Tăng tốc";
+                pool = questionBank.medium;
+            } else {
+                document.getElementById('stage-text').innerText = "Chặng 3: Về đích vinh quang";
+                pool = questionBank.medium; // Sử dụng tiếp pool medium chất lượng cao nếu chưa có pool hard/extreme riêng biệt
+            }
+            document.getElementById('prize-text').innerText = `${milestones[currentLevel - 1]} VNĐ`;
+
+            // Lọc câu hỏi chưa dùng
+            let availableQuestions = pool.filter(q => !usedQuestions.includes(q.id));
+            if (availableQuestions.length === 0) {
+                availableQuestions = pool; // Đề phòng hết kho câu hỏi thì reset lại dữ liệu
+            }
+
+            currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+            usedQuestions.push(currentQuestion.id);
+
+            // Hiển thị câu hỏi lên UI
+            document.getElementById('question-display').innerText = `Câu ${currentLevel}: ${currentQuestion.q}`;
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`text-${i}`).innerText = currentQuestion.a[i];
+            }
+
+            startTimer();
         }
 
         function selectAnswer(index) {
             clearInterval(timerInterval);
-            for (let i = 0; i < 4; i++) document.getElementById(`ans-${i}`).disabled = true;
-            const selectedBtn = document.getElementById(`ans-${index}`);
-            selectedBtn.classList.add('selected');
+            disableAllAnswers();
 
+            const selectedCard = document.getElementById(`btn-${index}`);
+            selectedCard.classList.add('selected');
+
+            // Tạo khoảng dừng hồi hộp 1.2s chuẩn Gameshow truyền hình
             setTimeout(() => {
-                selectedBtn.classList.remove('selected');
+                selectedCard.classList.remove('selected');
                 if (index === currentQuestion.c) {
-                    selectedBtn.classList.add('correct');
+                    selectedCard.classList.add('correct');
                     setTimeout(() => {
-                        if (currentLevel === 15) { alert("BẠN ĐÃ CHIẾN THẮNG!"); location.reload(); }
-                        else { currentLevel++; loadNewQuestion(); }
+                        if (currentLevel === 15) {
+                            showEndModal("CHIẾN THẮNG TUYỆT ĐỐI!", "Chúc mừng bạn đã xuất sắc vượt qua 15 câu hỏi và trở thành TRIỆU PHÚ với giải thưởng 150.000.000 VNĐ!");
+                        } else {
+                            currentLevel++;
+                            loadQuestion();
+                        }
                     }, 1500);
                 } else {
-                    selectedBtn.classList.add('wrong');
-                    document.getElementById(`ans-${currentQuestion.c}`).classList.add('correct');
-                    setTimeout(() => { location.reload(); }, 2000);
+                    selectedCard.classList.add('wrong');
+                    document.getElementById(`btn-${currentQuestion.c}`).classList.add('correct');
+                    setTimeout(() => {
+                        let reward = "0 VNĐ";
+                        if (currentLevel > 10) reward = milestones[9] + " VNĐ";
+                        else if (currentLevel > 5) reward = milestones[4] + " VNĐ";
+                        showEndModal("SAI RỒI!", `Rất tiếc, đáp án đúng là phương án dành cho ký tự phía trước câu hỏi. Bạn ra về với mốc điểm an toàn có trị giá: ${reward}.`);
+                    }, 2000);
                 }
-            }, 1000);
+            }, 1200);
         }
 
-        // --- CÁC HÀM XỬ LÝ TRỢ GIÚP HIỂN THỊ TRÊN MÀN HÌNH ---
+        /* HỆ THỐNG XỬ LÝ QUYỀN TRỢ GIÚP CHUYÊN NGHIỆP */
         function use5050() {
-            document.getElementById('help-50').disabled = true;
+            markHelpUsed('wrap-5050');
             let correctIdx = currentQuestion.c;
-            let candidates = [0, 1, 2, 3].filter(i => i !== correctIdx).sort(() => Math.random() - 0.5);
-            document.getElementById(`ans-${candidates[0]}`).style.visibility = 'hidden';
-            document.getElementById(`ans-${candidates[1]}`).style.visibility = 'hidden';
-            document.getElementById('help-output').innerText = "Hệ thống đã loại bỏ 2 phương án sai.";
+            let incorrectIndices = [0, 1, 2, 3].filter(i => i !== correctIdx);
+            
+            // Xáo trộn ngẫu nhiên mảng câu sai và giữ lại 1 câu sai, ẩn đi 2 câu còn lại
+            incorrectIndices.sort(() => Math.random() - 0.5);
+            for(let i = 0; i < 2; i++) {
+                let card = document.getElementById(`btn-${incorrectIndices[i]}`);
+                card.style.visibility = 'hidden';
+                card.classList.add('disabled');
+            }
+            showHelpPanel("Trợ giúp 50:50", "Hệ thống máy tính đã loại bỏ hai phương án sai cho bạn.");
+        }
+
+        function useCall() {
+            markHelpUsed('wrap-call');
+            const letters = ["A", "B", "C", "D"];
+            let chosenLetter = "";
+            
+            // Tỷ lệ chuẩn xác của người thân là 80% ở các câu khởi đầu
+            if (Math.random() < 0.8) {
+                chosenLetter = letters[currentQuestion.c];
+            } else {
+                let options = [0,1,2,3].filter(i => i !== currentQuestion.c && !document.getElementById(`btn-${i}`).classList.contains('disabled'));
+                chosenLetter = options.length > 0 ? letters[options[0]] : letters[currentQuestion.c];
+            }
+            showHelpPanel("Gọi điện thoại cho người thân", `📞 Người thân: "Theo mình biết thì đáp án chính xác của câu hỏi này khả năng cực kỳ cao là <strong>${chosenLetter}</strong> đấy!"`);
         }
 
         function useAudience() {
-            document.getElementById('help-audience').disabled = true;
+            markHelpUsed('wrap-audience');
             let cIdx = currentQuestion.c;
-            let v = [0, 0, 0, 0];
-            v[cIdx] = Math.floor(Math.random() * 20) + 60;
-            let rem = 100 - v[cIdx];
-            let rests = [0, 1, 2, 3].filter(i => i !== cIdx);
-            let v1 = Math.floor(Math.random() * rem); v[rests[0]] = v1; rem -= v1;
-            let v2 = Math.floor(Math.random() * rem); v[rests[1]] = v2; v[rests[2]] = rem - v2;
+            let votes = [0, 0, 0, 0];
+            
+            // Lọc các phương án chưa bị ẩn bởi 50/50
+            let activeIndices = [0,1,2,3].filter(i => !document.getElementById(`btn-${i}`).classList.contains('disabled'));
+            
+            let correctWeight = activeIndices.includes(cIdx) ? (currentLevel <= 5 ? 70 : 52) : 0;
+            votes[cIdx] = Math.floor(Math.random() * 15) + correctWeight;
+            
+            let remaining = 100 - votes[cIdx];
+            let restIndices = activeIndices.filter(i => i !== cIdx);
+            
+            if (restIndices.length === 1) {
+                votes[restIndices[0]] = remaining;
+            } else {
+                restIndices.forEach((idx, i) => {
+                    if (i === restIndices.length - 1) {
+                        votes[idx] = remaining;
+                    } else {
+                        let share = Math.floor(Math.random() * remaining);
+                        votes[idx] = share;
+                        remaining -= share;
+                    }
+                });
+            }
 
-            // Render biểu đồ trực tiếp vào vùng trống giữa màn hình
-            document.getElementById('help-output').innerHTML = `
-                <div class="chart-container">
-                    <div class="chart-bar-wrapper"><div class="chart-bar" style="height:${v[0]}px;"></div>A: ${v[0]}%</div>
-                    <div class="chart-bar-wrapper"><div class="chart-bar" style="height:${v[1]}px;"></div>B: ${v[1]}%</div>
-                    <div class="chart-bar-wrapper"><div class="chart-bar" style="height:${v[2]}px;"></div>C: ${v[2]}%</div>
-                    <div class="chart-bar-wrapper"><div class="chart-bar" style="height:${v[3]}px;"></div>D: ${v[3]}%</div>
-                </div>
-            `;
+            // Vẽ biểu đồ cột CSS động trực quan ngay trong live-panel
+            let htmlChart = `<div class="chart-container">`;
+            const labels = ["A", "B", "C", "D"];
+            for (let i = 0; i < 4; i++) {
+                htmlChart += `
+                    <div class="chart-column">
+                        <div class="chart-bar" style="height: ${votes[i]}px;"></div>
+                        <strong>${labels[i]}: ${votes[i]}%</strong>
+                    </div>`;
+            }
+            htmlChart += `</div>`;
+            showHelpPanel("Ý kiến của khán giả trong trường quay", htmlChart);
         }
 
-        function usePhone() {
-            document.getElementById('help-phone').disabled = true;
-            const labels = ["A", "B", "C", "D"];
-            let ans = Math.random() < 0.85 ? labels[currentQuestion.c] : labels[[0,1,2,3].filter(i => i !== currentQuestion.c)[0]];
-            document.getElementById('help-output').innerHTML = `📞 Người thân: "Theo mình đáp án câu này chắc chắn là <strong>${ans}</strong>!"`;
-        }
-
-        function useTeam() {
-            document.getElementById('help-team').disabled = true;
-            const labels = ["A", "B", "C", "D"];
-            let cLabel = labels[currentQuestion.c];
-            let wLabel = labels[[0,1,2,3].filter(i => i !== currentQuestion.c)[0]];
-            document.getElementById('help-output').innerHTML = `
-                🧠 Tổ tư vấn tại chỗ gợi ý:<br>
-                - Chuyên gia 1: Tôi chọn <strong>${cLabel}</strong> | 
-                - Chuyên gia 2: Phương án đúng là <strong>${cLabel}</strong> | 
-                - Chuyên gia 3: Tôi phân vân sang <strong>${wLabel}</strong>
-            `;
+        function useExpert() {
+            markHelpUsed('wrap-expert');
+            const letters = ["A", "B", "C", "D"];
+            let cLabel = letters[currentQuestion.c];
+            
+            showHelpPanel("Tổ tư vấn chuyên gia tại chỗ", `
+                🎓 Kết quả phân tích từ các vị chuyên gia:<br>
+                - Chuyên gia Kinh tế: "Tôi khẳng định đáp án đúng ở đây là phương án <strong>${cLabel}</strong>."<br>
+                - Chuyên gia Văn hóa: "Tôi đồng quan điểm, dữ liệu lịch sử hoàn toàn khớp với đáp án <strong>${cLabel}</strong>."
+            `);
         }
 
         function stopGame() {
             clearInterval(timerInterval);
-            let money = currentLevel > 1 ? milestones[currentLevel - 2] : "0";
-            if(confirm(`Bạn muốn dừng cuộc chơi và mang về ${money} VNĐ?`)) location.reload();
-            else {
-                timerInterval = setInterval(() => {
-                    timeLeft--; document.getElementById('timer').innerText = timeLeft;
-                    if (timeLeft <= 0) { clearInterval(timerInterval); location.reload(); }
-                }, 1000);
+            let currentPrize = currentLevel > 1 ? milestones[currentLevel - 2] : "0";
+            
+            if (confirm(`Bạn có chắc chắn muốn dừng cuộc chơi tại đây để bảo toàn số tiền thưởng trị giá ${currentPrize} VNĐ?`)) {
+                showEndModal("ĐÃ DỪNG CUỘC CHƠI", `Chúc mừng bạn đã hoàn thành phần thi và mang về số tiền an toàn: ${currentPrize} VNĐ.`);
+            } else {
+                // Tiếp tục đếm ngược nếu người chơi hủy lệnh dừng
+                startTimer();
             }
         }
 
-        function resetAnswerButtons() {
-            for (let i = 0; i < 4; i++) document.getElementById(`ans-${i}`).className = 'answer-btn';
+        // TIỆN ÍCH PHỤ TRỢ (HEALPERS)
+        function markHelpUsed(id) {
+            const wrap = document.getElementById(id);
+            wrap.classList.add('used');
+            wrap.querySelector('button').disabled = true;
+        }
+
+        function showHelpPanel(title, content) {
+            const box = document.getElementById('live-help-box');
+            document.getElementById('live-help-title').innerText = title;
+            document.getElementById('live-help-content').innerHTML = content;
+            box.style.display = 'block';
+        }
+
+        function hideHelpPanel() {
+            document.getElementById('live-help-box').style.display = 'none';
+        }
+
+        function disableAllAnswers() {
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`btn-${i}`).classList.add('disabled');
+            }
+        }
+
+        function resetAnswerCards() {
+            for (let i = 0; i < 4; i++) {
+                const card = document.getElementById(`btn-${i}`);
+                card.className = 'answer-card';
+                card.style.visibility = 'visible';
+            }
+        }
+
+        function showEndModal(title, description) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = description;
+            document.getElementById('modal-btn').innerText = "CHƠI LẠI TRẬN MỚI";
+            document.getElementById('game-modal').style.display = 'flex';
         }
     </script>
 </body>
