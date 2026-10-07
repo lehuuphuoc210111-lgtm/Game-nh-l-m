@@ -3,79 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ai Là Triệu Phú - Đặc Biệt 20/10</title>
+    <title>Ai Là Triệu Phú: Phiên Bản 20/10</title>
     <style>
-        body {
+        /* CSS giao diện đồng bộ với Game Hub của bạn */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle, #2a0845 0%, #10051d 100%);
-            color: #ffffff;
+        }
+        body {
+            background-color: #0d0614;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
-        .container {
-            width: 95%;
-            max-width: 750px;
-            background: rgba(20, 10, 40, 0.9);
-            border: 2px solid #ff758c;
+        .game-container {
+            width: 90%;
+            max-width: 800px;
+            background: linear-gradient(135deg, #1f0c24 0%, #12051a 100%);
+            border: 2px solid #ff4d88;
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 0 30px rgba(255, 117, 140, 0.4);
-            text-align: center;
+            box-shadow: 0 0 25px rgba(255, 77, 136, 0.4);
+            position: relative;
         }
-        .header-game {
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid rgba(255, 77, 136, 0.3);
+            padding-bottom: 15px;
             margin-bottom: 20px;
-            font-size: 1rem;
-            color: #ffb199;
-            border-bottom: 1px solid rgba(255, 117, 140, 0.3);
-            padding-bottom: 10px;
+            font-size: 1.1rem;
         }
-        .helps {
+        .lifelines {
             display: flex;
-            gap: 10px;
             justify-content: center;
+            gap: 12px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
-        .help-btn {
-            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+        .lifeline-btn {
+            background: linear-gradient(135deg, #ff4d88, #ff1a66);
             border: none;
             color: white;
-            padding: 8px 12px;
-            border-radius: 10px;
+            padding: 8px 16px;
+            border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.85rem;
             transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(255, 26, 102, 0.3);
         }
-        .help-btn:hover:not(:disabled) {
+        .lifeline-btn:hover:not(:disabled) {
             transform: scale(1.05);
-            background: linear-gradient(135deg, #ff5272 0%, #ff629a 100%);
+            background: linear-gradient(135deg, #ff6699, #ff3377);
         }
-        .help-btn:disabled {
+        .lifeline-btn:disabled {
             background: #444;
             color: #888;
             cursor: not-allowed;
             box-shadow: none;
         }
+        .sub-text {
+            text-align: center;
+            font-style: italic;
+            color: #ffb3cc;
+            margin-bottom: 15px;
+        }
         .question-box {
-            background: rgba(45, 15, 60, 0.8);
-            border: 1px solid #ff758c;
+            background: rgba(45, 15, 56, 0.7);
+            border: 2px solid #ff4d88;
             border-radius: 15px;
-            padding: 20px;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            min-height: 80px;
+            padding: 25px;
+            text-align: center;
+            font-size: 1.25rem;
+            min-height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 15px rgba(255, 77, 136, 0.2);
         }
         .answers-grid {
             display: grid;
@@ -83,92 +94,90 @@
             gap: 15px;
             margin-bottom: 25px;
         }
-        .ans-btn {
-            background: linear-gradient(135deg, #3b1443 0%, #5d1a6e 100%);
-            border: 1px solid #ff758c;
-            color: white;
+        @media (max-width: 600px) {
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .answer-btn {
+            background: linear-gradient(135deg, #3d124e, #280a33);
+            border: 2px solid #ff4d88;
+            border-radius: 12px;
             padding: 15px;
-            border-radius: 30px;
+            color: white;
+            font-size: 1.05rem;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: 0.3s;
             text-align: left;
-            padding-left: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
         }
-        .ans-btn:hover:not(:disabled) {
-            background: linear-gradient(135deg, #ff758c 0%, #ffb199 100%);
-            color: #10051d;
+        .answer-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #5c1b73, #3d124e);
+            border-color: #ff99bb;
             transform: translateY(-2px);
-            box-shadow: 0 0 15px #ff758c;
         }
-        .ans-btn.correct {
-            background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important;
-            color: white !important;
-            border-color: #fff;
+        .answer-btn.correct {
+            background: linear-gradient(135deg, #28a745, #1e7e34) !important;
+            border-color: #55efc4 !important;
         }
-        .ans-btn.wrong {
-            background: linear-gradient(135deg, #cb2d3e 0%, #ef473a 100%) !important;
-            color: white !important;
-            border-color: #fff;
+        .answer-btn.wrong {
+            background: linear-gradient(135deg, #dc3545, #bd2130) !important;
+            border-color: #ff7675 !important;
         }
-        .ans-btn:disabled {
-            cursor: default;
+        .footer-nav {
+            text-align: center;
         }
         .back-link {
-            display: inline-block;
-            margin-top: 15px;
-            color: #ffb199;
+            color: #ffb3cc;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             transition: 0.2s;
         }
         .back-link:hover {
             color: #ffffff;
             text-decoration: underline;
         }
-        .message-modal {
-            font-size: 1rem;
-            color: #ffb199;
-            min-height: 30px;
-            margin-bottom: 10px;
-            font-style: italic;
+        /* Màn hình kết quả */
+        .result-screen {
+            text-align: center;
+            padding: 20px;
+        }
+        .result-screen h2 {
+            color: #ff4d88;
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+        .result-screen p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #ffb3cc;
+        }
+        .primary-btn {
+            background: linear-gradient(135deg, #ff4d88, #ff1a66);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 26, 102, 0.4);
+            transition: 0.3s;
+        }
+        .primary-btn:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header-game">
-            <span>🌸 <b>Ai Là Triệu Phú: Phiên Bản 20/10</b></span>
-            <span id="progress">Câu 1/50</span>
-        </div>
-
-        <!-- 4 Trợ Giúp -->
-        <div class="helps">
-            <button class="help-btn" id="help5050" onclick="use5050()">50:50</button>
-            <button class="help-btn" id="helpCall" onclick="useCall()">📞 Gọi điện</button>
-            <button class="help-btn" id="helpAud" onclick="useAudience()">👥 Khán giả</button>
-            <button class="help-btn" id="helpSwap" onclick="useSwap()">🔄 Đổi câu hỏi</button>
-        </div>
-
-        <div class="message-modal" id="msg">Hãy chọn đáp án chính xác nhất!</div>
-
-        <div class="question-box" id="questionText">Đang tải câu hỏi...</div>
-
-        <div class="answers-grid">
-            <button class="ans-btn" id="btn0" onclick="checkAnswer(0)"></button>
-            <button class="ans-btn" id="btn1" onclick="checkAnswer(1)"></button>
-            <button class="ans-btn" id="btn2" onclick="checkAnswer(2)"></button>
-            <button class="ans-btn" id="btn3" onclick="checkAnswer(3)"></button>
-        </div>
-
-        <a href="index.html" class="back-link">⬅ Quay lại Game Hub</a>
+    <div class="game-container" id="game-app">
+        <!-- Phần nội dung game sẽ được render tự động qua JavaScript -->
     </div>
 
     <script>
-        // Kho dữ liệu câu hỏi về chủ đề 20/10 và Phụ nữ Việt Nam (có thể mở rộng thoải mái)
+        // Danh sách câu hỏi mẫu về chủ đề 20/10 (Bạn có thể thêm bớt tùy ý)
         const questionBank = {
     easy: [
         { q: "Ngày 20/10 hàng năm là ngày kỷ niệm gì tại Việt Nam?", a: ["Ngày Quốc tế Phụ nữ", "Ngày Phụ nữ Việt Nam", "Ngày Gia đình Việt Nam", "Ngày Nhà giáo Việt Nam"], correct: 1 },
@@ -315,164 +324,164 @@
     ]
 };
 
-        let gameQuestions = [];
+
+        let questions = [];
         let currentIndex = 0;
         let score = 0;
-        let currentCorrectAnswer = 0;
-        let usedHelps = {
-            '5050': false,
-            'call': false,
-            'audience': false,
-            'swap': false
-        };
+        let selectedFifty = false;
 
-        // Hàm xáo trộn mảng ngẫu nhiên
-        function shuffle(array) {
-            let currentIndex = array.length, randomIndex;
-            while (currentIndex !== 0) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        // Hàm xáo trộn mảng (Fisher-Yates shuffle)
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
             }
-            return array;
+            return arr;
         }
 
-        // Khởi tạo trò chơi mới: Lấy ngẫu nhiên tối đa 50 câu không trùng nhau
+        // Khởi tạo trò chơi: Trộn thứ tự câu hỏi và trộn các đáp án trong từng câu
         function initGame() {
-            // Xáo trộn toàn bộ kho câu hỏi gốc
-            let shuffledPool = shuffle([...allQuestions]);
-            // Cắt lấy tối đa 50 câu
-            gameQuestions = shuffledPool.slice(0, 50);
+            // Xáo trộn thứ tự các câu hỏi
+            let shuffledQ = shuffleArray(rawQuestions);
+
+            // Xáo trộn các đáp án của từng câu, đồng thời giữ vết đáp án đúng mới
+            questions = shuffledQ.map(item => {
+                let optionsWithIndex = item.options.map((opt, idx) => ({ text: opt, isCorrect: idx === item.correct }));
+                let shuffledOptions = shuffleArray(optionsWithIndex);
+                let newCorrectIndex = shuffledOptions.findIndex(opt => opt.isCorrect);
+
+                return {
+                    q: item.q,
+                    options: shuffledOptions.map(opt => opt.text),
+                    correct: newCorrectIndex
+                };
+            });
+
             currentIndex = 0;
             score = 0;
-            
-            // Reset trạng thái trợ giúp
-            usedHelps = { '5050': false, 'call': false, 'audience': false, 'swap': false };
-            document.getElementById('help5050').disabled = false;
-            document.getElementById('helpCall').disabled = false;
-            document.getElementById('helpAud').disabled = false;
-            document.getElementById('helpSwap').disabled = false;
-
-            loadQuestion();
+            selectedFifty = false;
+            renderQuestion();
         }
 
-        function loadQuestion() {
-            if (currentIndex >= gameQuestions.length) {
-                endGame(true);
+        function renderQuestion() {
+            const app = document.getElementById('game-app');
+            
+            if (currentIndex >= questions.length) {
+                // Màn hình chiến thắng khi hoàn thành hết câu hỏi
+                app.innerHTML = `
+                    <div class="result-screen">
+                        <h2>🏆 CHIẾN THẮNG TUYỆT ĐỐI!</h2>
+                        <p>Bạn đã hoàn thành xuất sắc toàn bộ ${questions.length} câu hỏi về chủ đề 20/10!</p>
+                        <p>Chúc một nửa thế giới luôn luôn hạnh phúc và rạng rỡ!</p>
+                        <button class="primary-btn" onclick="initGame()">Chơi lại từ đầu</button>
+                        <div style="margin-top: 15px;">
+                            <a href="index.html" class="back-link">🏠 Quay lại Game Hub</a>
+                        </div>
+                    </div>
+                `;
                 return;
             }
 
-            let qObj = gameQuestions[currentIndex];
-            document.getElementById('progress').innerText = `Câu ${currentIndex + 1}/${gameQuestions.length}`;
-            document.getElementById('questionText').innerText = qObj.q;
-            document.getElementById('msg').innerText = "Hãy chọn đáp án chính xác nhất!";
+            let currentQ = questions[currentIndex];
 
-            // Trộn thứ tự 4 đáp án để tăng độ ngẫu nhiên
-            let originalOptions = qObj.options.map((text, idx) => ({ text, isCorrect: idx === qObj.correct }));
-            let shuffledOpts = shuffle(originalOptions);
-
-            for (let i = 0; i < 4; i++) {
-                let btn = document.getElementById(`btn${i}`);
-                btn.innerText = `${String.fromCharCode(65 + i)}. ${shuffledOpts[i].text}`;
-                btn.style.visibility = "visible";
-                btn.disabled = false;
-                btn.className = "ans-btn";
-                if (shuffledOpts[i].isCorrect) {
-                    currentCorrectAnswer = i;
-                }
-            }
+            app.innerHTML = `
+                <div class="header">
+                    <span>🌸 Ai Là Triệu Phú: Phiên Bản 20/10</span>
+                    <span>Câu ${currentIndex + 1}/${questions.length}</span>
+                </div>
+                <div class="lifelines">
+                    <button class="lifeline-btn" id="btn-5050" onclick="useFiftyFifty()" ${selectedFifty ? 'disabled' : ''}>50:50</button>
+                    <button class="lifeline-btn" onclick="useCallFriend()">📞 Gọi điện</button>
+                    <button class="lifeline-btn" onclick="useAudience()">👥 Khán giả</button>
+                    <button class="lifeline-btn" onclick="useChangeQuestion()">🔄 Đổi câu hỏi</button>
+                </div>
+                <div class="sub-text">Hãy chọn đáp án chính xác nhất!</div>
+                <div class="question-box" id="q-text">${currentQ.q}</div>
+                <div class="answers-grid" id="answers-container">
+                    <button class="answer-btn" onclick="checkAnswer(0)" id="ans-0">A. ${currentQ.options[0]}</button>
+                    <button class="answer-btn" onclick="checkAnswer(1)" id="ans-1">B. ${currentQ.options[1]}</button>
+                    <button class="answer-btn" onclick="checkAnswer(2)" id="ans-2">C. ${currentQ.options[2]}</button>
+                    <button class="answer-btn" onclick="checkAnswer(3)" id="ans-3">D. ${currentQ.options[3]}</button>
+                </div>
+                <div class="footer-nav">
+                    <a href="index.html" class="back-link">← Quay lại Game Hub</a>
+                </div>
+            `;
         }
 
-        function checkAnswer(selectedIdx) {
-            // Vô hiệu hóa tất cả các nút để tránh bấm nhiều lần
+        function checkAnswer(selectedIndex) {
+            let currentQ = questions[currentIndex];
+            let correctIndex = currentQ.correct;
+
+            // Khóa tất cả nút đáp án để tránh click đúp
             for (let i = 0; i < 4; i++) {
-                document.getElementById(`btn${i}`).disabled = true;
+                let btn = document.getElementById(`ans-${i}`);
+                if(btn) btn.disabled = true;
             }
 
-            let correctBtn = document.getElementById(`btn${currentCorrectAnswer}`);
-            let selectedBtn = document.getElementById(`btn${selectedIdx}`);
+            let selectedBtn = document.getElementById(`ans-${selectedIndex}`);
+            let correctBtn = document.getElementById(`ans-${correctIndex}`);
 
-            if (selectedIdx === currentCorrectAnswer) {
+            if (selectedIndex === correctIndex) {
                 selectedBtn.classList.add('correct');
-                document.getElementById('msg').innerText = "🎉 Chính xác! Bạn thật xuất sắc!";
                 score++;
-                currentIndex++;
-                setTimeout(loadQuestion, 1500);
             } else {
                 selectedBtn.classList.add('wrong');
                 correctBtn.classList.add('correct');
-                document.getElementById('msg').innerText = "❌ Rất tiếc, đáp án chưa chính xác!";
-                setTimeout(() => endGame(false), 2000);
             }
+
+            // Chờ 1.5 giây rồi tự động chuyển sang câu hỏi tiếp theo
+            setTimeout(() => {
+                currentIndex++;
+                renderQuestion();
+            }, 1500);
         }
 
-        // --- CÁC QUYỀN TRỢ GIÚP ---
-        function use5050() {
-            if (usedHelps['5050']) return;
-            usedHelps['5050'] = true;
-            document.getElementById('help5050').disabled = true;
+        // Tính năng trợ giúp 50:50
+        function useFiftyFifty() {
+            if (selectedFifty) return;
+            selectedFifty = true;
+            document.getElementById('btn-5050').disabled = true;
 
-            let hiddenCount = 0;
+            let currentQ = questions[currentIndex];
+            let correctIndex = currentQ.correct;
+            let wrongIndices = [];
             for (let i = 0; i < 4; i++) {
-                if (i !== currentCorrectAnswer && hiddenCount < 2) {
-                    document.getElementById(`btn${i}`).style.visibility = "hidden";
-                    hiddenCount++;
-                }
+                if (i !== correctIndex) wrongIndices.push(i);
             }
-            document.getElementById('msg').innerText = "💡 50:50 đã loại bỏ 2 đáp án sai!";
+            // Ẩn ngẫu nhiên 2 đáp án sai
+            shuffleArray(wrongIndices).slice(0, 2).forEach(idx => {
+                let btn = document.getElementById(`ans-${idx}`);
+                if (btn) {
+                    btn.innerHTML = "";
+                    btn.style.visibility = "hidden";
+                    btn.disabled = true;
+                }
+            });
         }
 
-        function useCall() {
-            if (usedHelps['call']) return;
-            usedHelps['call'] = true;
-            document.getElementById('helpCall').disabled = true;
-
-            let correctLetter = String.fromCharCode(65 + currentCorrectAnswer);
-            document.getElementById('msg').innerText = `📞 Người thân tư vấn: "Mình nghĩ đáp án đúng là câu ${correctLetter} bạn nhé!"`;
+        function useCallFriend() {
+            let currentQ = questions[currentIndex];
+            let letters = ['A', 'B', 'C', 'D'];
+            alert(`📞 Người thân gợi ý: Theo mình đáp án chính xác có khả năng cao là ${letters[currentQ.correct]}.`);
         }
 
         function useAudience() {
-            if (usedHelps['audience']) return;
-            usedHelps['audience'] = true;
-            document.getElementById('helpAud').disabled = true;
-
-            let correctLetter = String.fromCharCode(65 + currentCorrectAnswer);
-            document.getElementById('msg').innerText = `👥 Khảo sát khán giả: Phần lớn bình chọn cho đáp án ${correctLetter}!`;
+            let currentQ = questions[currentIndex];
+            let letters = ['A', 'B', 'C', 'D'];
+            alert(`👥 Ý kiến khán giả trong trường quay:\n- ${letters[currentQ.correct]}: 75%\n- Các đáp án còn lại: 25%`);
         }
 
-        function useSwap() {
-            if (usedHelps['swap']) return;
-            usedHelps['swap'] = true;
-            document.getElementById('helpSwap').disabled = true;
-
-            document.getElementById('msg').innerText = "🔄 Đã đổi câu hỏi mới!";
-            // Lấy một câu hỏi mới đưa vào vị trí hiện tại
-            let extraQ = allQuestions[Math.floor(Math.random() * allQuestions.length)];
-            gameQuestions[currentIndex] = extraQ;
-            loadQuestion();
+        function useChangeQuestion() {
+            // Đưa câu hỏi hiện tại xuống cuối danh sách và load câu tiếp theo
+            let currentQ = questions.splice(currentIndex, 1)[0];
+            questions.push(currentQ);
+            renderQuestion();
         }
 
-        function endGame(isCompleted) {
-            let container = document.querySelector('.container');
-            if (isCompleted) {
-                container.innerHTML = `
-                    <h1 style="color: #ff758c;">🏆 CHIẾN THẮNG TUYỆT ĐỐI!</h1>
-                    <p style="font-size: 1.2rem; color: #fff;">Bạn đã hoàn thành xuất sắc toàn bộ ${gameQuestions.length} câu hỏi về chủ đề 20/10!</p>
-                    <p style="color: #ffb199; font-size: 1.1rem;">Chúc một nửa thế giới luôn luôn hạnh phúc và rạng rỡ!</p>
-                    <a href="index.html" class="ans-btn" style="text-align: center; display: block; margin-top: 20px; text-decoration: none;">🏠 Quay lại Game Hub</a>
-                `;
-            } else {
-                container.innerHTML = `
-                    <h1 style="color: #ff5272;">GAME OVER</h1>
-                    <p style="font-size: 1.2rem; color: #fff;">Bạn đã trả lời đúng ${score} câu hỏi trong lượt chơi này.</p>
-                    <button onclick="initGame()" class="ans-btn" style="width: 100%; text-align: center; margin-top: 15px;">🔄 Chơi Lại Từ Đầu</button>
-                    <a href="index.html" class="back-link" style="display: block; margin-top: 15px;">🏠 Về trang chủ Game Hub</a>
-                `;
-            }
-        }
-
-        // Bắt đầu game ngay khi tải trang
-        window.onload = initGame;
+        // Khởi chạy game lần đầu
+        initGame();
     </script>
 </body>
 </html>
