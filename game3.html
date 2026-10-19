@@ -1,432 +1,463 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Ma Sói - Quản Trò Tự Động</title>
-  <style>
-    :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --accent-red: #ef4444;
-      --accent-blue: #3b82f6;
-      --accent-gold: #f59e0b;
-      --accent-green: #10b981;
-      --text-main: #f8fafc;
-      --border-color: #334155;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; padding: 20px; min-height: 100vh; }
-    
-    .container { width: 100%; max-width: 800px; background: var(--card-bg); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-    h1 { text-align: center; color: var(--accent-red); margin-bottom: 20px; font-size: 2rem; text-transform: uppercase; letter-spacing: 2px; }
-    
-    .card { background: #0f172a; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px; }
-    .form-group { margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
-    input { flex: 1; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: #1e293b; color: #fff; font-size: 1rem; min-width: 150px; }
-    input:focus { outline: none; border-color: var(--accent-blue); }
-    
-    button { padding: 12px 20px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
-    .btn-primary { background: var(--accent-blue); color: #fff; }
-    .btn-primary:hover { background: #2563eb; }
-    .btn-success { background: var(--accent-green); color: #fff; }
-    .btn-success:hover { background: #059669; }
-    .btn-danger { background: var(--accent-red); color: #fff; }
-    .btn-danger:hover { background: #dc2626; }
-    .btn-warning { background: var(--accent-gold); color: #000; }
-    .btn-warning:hover { background: #d97706; }
-    
-    .hidden { display: none !important; }
-    .player-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 15px; }
-    .player-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 6px; text-align: center; position: relative; }
-    .player-card.dead { opacity: 0.4; text-decoration: line-through; border-color: var(--accent-red); }
-    
-    .room-header { background: #1e1b4b; border: 1px dashed #6366f1; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
-    .room-id-badge { font-size: 1.8rem; font-weight: bold; color: var(--accent-gold); letter-spacing: 4px; margin-top: 5px; }
-
-    .phase-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-weight: bold; margin-bottom: 15px; font-size: 1.1rem; }
-    .phase-night { background: #312e81; color: #a5b4fc; }
-    .phase-day { background: #78350f; color: #fde68a; }
-
-    .role-info { background: #1a2e05; border: 1px solid #4d7c0f; padding: 15px; border-radius: 6px; color: #bef264; margin-bottom: 15px; font-weight: bold; text-align: center; }
-    .logs { background: #000; padding: 15px; border-radius: 6px; height: 150px; overflow-y: auto; font-family: monospace; font-size: 0.9rem; color: #4ade80; border: 1px solid var(--border-color); }
-    .action-controls { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
-    select { padding: 10px; border-radius: 6px; background: #1e293b; color: #fff; border: 1px solid var(--border-color); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Ma Sói - Quản Trò Tự Động</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-gold: #f59e0b;
+            --text-main: #f8fafc;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; padding: 20px; }
+        .container { width: 100%; max-width: 750px; background: var(--card-bg); border-radius: 12px; padding: 24px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; text-align: center; }
+        button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: none; font-weight: bold; background: var(--accent-blue); color: #fff; cursor: pointer; }
+        .hidden { display: none; }
+        .player-card { background: #334155; padding: 10px; margin: 6px 0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .room-code { color: var(--accent-gold); font-size: 1.5rem; font-weight: bold; }
+        .role-box { background: #0f172a; border: 2px dashed var(--accent-gold); padding: 15px; border-radius: 8px; font-size: 1.2rem; margin: 15px 0; color: var(--accent-gold); text-align: left; }
+        .log-box { background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 6px; max-height: 150px; overflow-y: auto; text-align: left; font-size: 0.9rem; margin-top: 10px; color: #cbd5e1; }
+        .action-btn { background: #334155; border: 1px solid var(--accent-blue); padding: 10px; margin: 4px 0; border-radius: 6px; width: 100%; text-align: left; cursor: pointer; color: #fff; font-weight: 500; }
+        .action-btn:hover { background: var(--accent-blue); }
+        .action-btn.selected { background: var(--accent-green); border-color: #fff; }
+        .timer-badge { background: var(--accent-red); color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 1.1rem; }
+        .vote-confirm-box { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-agree { background: var(--accent-green); }
+        .btn-disagree { background: var(--accent-red); }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>🐺 TRÒ CHƠI MA SÓI 🐺</h1>
+<div class="container">
+    <h2>🐺 GAME MA SÓI - QUẢN TRÒ TỰ ĐỘNG</h2>
+    
+    <!-- Màn hình Setup -->
+    <div id="setup-section">
+        <input type="text" id="username" placeholder="Nhập tên của bạn...">
+        <button onclick="createRoom()">Tạo phòng mới</button>
+        <hr style="margin:15px 0; border-color:#334155;">
+        <input type="text" id="room-code-input" placeholder="Nhập mã phòng (ví dụ: masoi-1234)...">
+        <button onclick="joinRoom()" style="background:var(--accent-green);">Vào phòng</button>
+    </div>
 
-    <!-- 1. TẠO & THAM GIA PHÒNG -->
-    <div id="roomSection" class="card">
-      <h3>Sảnh Chờ - Phòng Chơi Online/Offline</h3>
-      <br>
-      <div class="form-group">
-        <input type="text" id="playerNameInput" placeholder="Nhập tên của bạn...">
-      </div>
-      
-      <div class="form-group">
-        <button class="btn-success" style="flex: 1;" onclick="createRoom()">➕ Tạo Phòng Mới</button>
-      </div>
+    <!-- Màn hình Phòng chờ -->
+    <div id="room-section" class="hidden">
+        <h3>MÃ PHÒNG: <span id="display-room-code" class="room-code">Đang kết nối...</span></h3>
+        <p style="color:#94a3b8; font-size: 0.9rem;">Gửi mã này cho bạn bè để cùng chơi!</p>
+        <br>
+        <h4>Danh sách người chơi (<span id="player-count">0</span>)</h4>
+        <div id="player-list"></div>
 
-      <hr style="border-color: var(--border-color); margin: 15px 0;">
+        <button id="btn-start-game" class="hidden" style="background: var(--accent-green); font-size: 1.2rem; margin-top: 15px;" onclick="startGame()">🚀 BẮT ĐẦU TRÒ CHƠI</button>
+    </div>
 
-      <div class="form-group">
-        <input type="text" id="joinRoomIdInput" maxlength="5" placeholder="Nhập mã phòng 5 chữ số...">
-        <button class="btn-primary" onclick="joinRoom()">🚪 Vào Phòng</button>
-      </div>
-    </div>
+    <!-- Màn hình Chơi Game -->
+    <div id="game-section" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 id="phase-title" style="color: var(--accent-gold);">🌙 BAN ĐÊM - BẮT ĐẦU</h3>
+            <div id="timer-display" class="timer-badge">30s</div>
+        </div>
+        
+        <div class="role-box">
+            <div>VAI TRÒ CỦA BẠN: <b id="my-role" style="color: #f59e0b;">-</b></div>
+            <div id="role-status" style="font-size: 0.85rem; color: #94a3b8; margin-top: 5px;">Đang chờ đến lượt...</div>
+        </div>
 
-    <!-- 2. CẤU HÌNH PHÒNG CHƠI -->
-    <div id="setupPhase" class="card hidden">
-      <div class="room-header">
-        <div>MÃ PHÒNG CHƠI CỦA BẠN</div>
-        <div id="displayRoomId" class="room-id-badge">-----</div>
-        <small style="color: #94a3b8;">Chia sẻ mã 5 chữ số này cho bạn bè để cùng vào phòng!</small>
-      </div>
+        <h4 id="action-prompt" style="margin-top: 10px; color: #60a5fa;">Quản trò đang điều hành...</h4>
+        <div id="action-buttons" style="margin-top: 10px;"></div>
 
-      <h3>Danh Sách Người Chơi Trong Phòng</h3>
-      <p id="playerCountMsg" style="margin-top: 5px; color: #94a3b8;">Số lượng người chơi: 0</p>
-      <div id="setupPlayerList" class="player-list"></div>
-      <br>
-      <button id="btnStartGame" class="btn-danger hidden" style="width: 100%; font-size: 1.1rem;" onclick="startGame()">BẮT ĐẦU VÁN CHƠI</button>
-    </div>
+        <div class="log-box" id="game-log"></div>
+    </div>
+</div>
 
-    <!-- 3. GIAO DIỆN BÀN CHƠI -->
-    <div id="gamePhase" class="card hidden">
-      <div style="text-align: center;">
-        <span id="phaseBadge" class="phase-badge phase-night">🌙 BAN ĐÊM</span>
-      </div>
+<script>
+    let peer = null, hostConn = null, connections = [], isHost = false, myName = "", myRole = "", myId = "";
+    let players = []; 
+    let currentStep = 0; 
+    let timer = null, timeLeft = 30;
+    let selectedTargets = [];
+    let lovers = [];
 
-      <div class="role-info" id="currentTurnInfo">Đang gọi các chức năng ban đêm...</div>
+    const STEPS = ['Cupid', 'Bảo Vệ', 'Ma Sói', 'Tiên Tri', 'Phù Thủy', 'DAY_VOTE', 'DAY_CONFIRM'];
 
-      <div class="action-controls" id="actionControls">
-        <!-- Nút hành động động theo lượt -->
-      </div>
+    function createRoom() {
+        myName = document.getElementById('username').value.trim() || "Chủ phòng";
+        isHost = true;
+        const randomCode = "masoi-" + Math.floor(1000 + Math.random() * 9000);
+        showRoom();
+        document.getElementById('display-room-code').innerText = "Đang tạo...";
+        peer = new Peer(randomCode);
+        peer.on('open', (id) => {
+            myId = id;
+            document.getElementById('display-room-code').innerText = id;
+            players = [{ id: id, name: myName + " (Chủ phòng)", alive: true }];
+            renderPlayers();
+            document.getElementById('btn-start-game').classList.remove('hidden');
+        });
+        peer.on('connection', (conn) => {
+            connections.push(conn);
+            conn.on('data', (data) => handleNetworkData(data, conn));
+        });
+    }
 
-      <h4 style="margin-top: 20px; margin-bottom: 10px;">Danh Sách Người Chơi</h4>
-      <div id="gamePlayerList" class="player-list"></div>
+    function joinRoom() {
+        myName = document.getElementById('username').value.trim() || "Người chơi";
+        const roomCode = document.getElementById('room-code-input').value.trim();
+        if (!roomCode) return alert("Vui lòng nhập mã phòng!");
+        isHost = false;
+        showRoom();
+        document.getElementById('display-room-code').innerText = roomCode;
+        peer = new Peer();
+        peer.on('open', (id) => {
+            myId = id;
+            hostConn = peer.connect(roomCode);
+            hostConn.on('open', () => hostConn.send({ type: 'join', name: myName }));
+            hostConn.on('data', (data) => handleNetworkData(data, hostConn));
+        });
+    }
 
-      <h4 style="margin-top: 20px; margin-bottom: 10px;">Nhật Ký Quản Trò</h4>
-      <div id="gameLogs" class="logs"></div>
-      
-      <br>
-      <button id="btnNextPhase" class="btn-warning hidden" style="width: 100%;" onclick="nextPhase()">CHUYỂN BAN NGÀY</button>
-      <button id="btnDayVote" class="btn-danger hidden" style="width: 100%;" onclick="resolveDayVote()">KẾT THÚC BỎ PHIẾU TREO CỔ</button>
-    </div>
-  </div>
+    function sendToHost(data) {
+        if (isHost) {
+            handleNetworkData(data, null);
+        } else if (hostConn) {
+            hostConn.send(data);
+        }
+    }
 
-  <script>
-    let players = [];
-    let currentRoomId = '';
-    let isHost = false;
-    let myPlayerId = Date.now() + Math.random();
-    let channel = null;
+    function handleNetworkData(data, conn) {
+        if (data.type === 'join' && isHost) {
+            players.push({ id: conn.peer, name: data.name, alive: true });
+            renderPlayers();
+            broadcast({ type: 'update-players', players: players });
+        } else if (data.type === 'update-players') {
+            players = data.players;
+            renderPlayers();
+        } else if (data.type === 'start-game') {
+            setupMyRole(data.roles[myId], data.allRoles);
+        } else if (data.type === 'next-step') {
+            runNightStep(data.step, data.suspectTarget);
+        } else if (data.type === 'set-lovers') {
+            lovers = data.lovers;
+            if (lovers.includes(myId)) {
+                log(`💘 Bạn đã được Cupid ghép đôi thành một cặp! Nếu người kia chết, bạn cũng sẽ chết theo.`);
+            }
+        } else if (data.type === 'player-died') {
+            handlePlayerDeath(data.deadId);
+        } else if (data.type === 'action-done' && isHost) {
+            // Nhận báo cáo hoàn thành action từ player bất kỳ
+            log(`✅ Nhận báo cáo hoàn tất từ người chơi.`);
+            setTimeout(() => nextTurnHost(), 1500);
+        }
+    }
 
-    let gameState = {
-      phase: 'SETUP', // SETUP, NIGHT, DAY
-      nightStep: 0,
-      actions: { wolfTarget: null, protectedTarget: null, seerTarget: null, witchSave: false, witchPoison: null },
-      wolfKillsCount: 1,
-      charmedPlayers: []
-    };
+    function startGame() {
+        if (players.length < 2) return alert("Cần ít nhất 2 người chơi!");
+        let assignedRoles = generateRoles(players.length);
+        let roleMap = {};
+        players.forEach((p, idx) => {
+            p.role = assignedRoles[idx];
+            roleMap[p.id] = p.role;
+        });
 
-    const ROLE_POOL_SMALL = ['Seer', 'Bodyguard', 'Witch', 'Hunter', 'WolfCub'];
-    const ROLE_POOL_MEDIUM = ['Seer', 'Bodyguard', 'Witch', 'Hunter', 'WolfCub', 'Sorceress'];
+        broadcast({ type: 'start-game', roles: roleMap, allRoles: roleMap });
+        setupMyRole(roleMap[myId], roleMap);
+    }
 
-    // Tạo Mã Phòng 5 Chữ Số Ngẫu Nhiên
-    function generateRoomId() {
-      return Math.floor(10000 + Math.random() * 90000).toString();
-    }
+    function generateRoles(count) {
+        let pool = [];
+        if (count <= 3) {
+            pool = ['Ma Sói', 'Dân Thường', 'Tiên Tri'];
+        } else if (count <= 5) {
+            pool = ['Ma Sói', 'Ma Sói', 'Dân Thường', 'Bảo Vệ', 'Tiên Tri'];
+        } else {
+            pool = ['Ma Sói', 'Ma Sói', 'Cupid', 'Tiên Tri', 'Bảo Vệ', 'Phù Thủy'];
+            while (pool.length < count) {
+                pool.push('Dân Thường');
+            }
+        }
+        return pool.slice(0, count).sort(() => Math.random() - 0.5);
+    }
 
-    // Kết nối kênh mạng giả lập giữa các tab
-    function setupNetworkChannel(roomId) {
-      channel = new BroadcastChannel('werewolf_room_' + roomId);
-      channel.onmessage = (event) => {
-        const data = event.data;
-        if (data.type === 'SYNC_PLAYERS') {
-          players = data.players;
-          renderSetupList();
-        } else if (data.type === 'GAME_STARTED') {
-          players = data.players;
-          document.getElementById('setupPhase').classList.add('hidden');
-          document.getElementById('gamePhase').classList.remove('hidden');
-          log(`Game đã bắt đầu với ${players.length} người chơi!`);
-          startNightUI();
-        } else if (data.type === 'SYNC_STATE') {
-          players = data.players;
-          renderBoard();
-        }
-      };
-    }
+    function setupMyRole(role, roleMap) {
+        myRole = role;
+        players.forEach(p => p.role = roleMap[p.id]);
+        document.getElementById('room-section').classList.add('hidden');
+        document.getElementById('game-section').classList.remove('hidden');
+        document.getElementById('my-role').innerText = role;
+        
+        log("📢 Quản trò: Đêm đầu tiên bắt đầu! Mọi người nhắm mắt lại.");
+        if (isHost) {
+            setTimeout(() => advanceStep(0), 1000);
+        }
+    }
 
-    function createRoom() {
-      const name = document.getElementById('playerNameInput').value.trim();
-      if (!name) return alert('Vui lòng nhập tên của bạn!');
+    function advanceStep(stepIdx, suspectTarget = null) {
+        currentStep = stepIdx;
+        broadcast({ type: 'next-step', step: stepIdx, suspectTarget: suspectTarget });
+        runNightStep(stepIdx, suspectTarget);
+    }
 
-      currentRoomId = generateRoomId();
-      isHost = true;
-      
-      players.push({ id: myPlayerId, name, role: '', isAlive: true, isCharmed: false });
-      
-      document.getElementById('roomSection').classList.add('hidden');
-      document.getElementById('setupPhase').classList.remove('hidden');
-      document.getElementById('displayRoomId').innerText = currentRoomId;
+    function nextTurnHost() {
+        if (!isHost) return;
+        let nextStepIdx = (currentStep + 1) % STEPS.length;
+        advanceStep(nextStepIdx);
+    }
 
-      setupNetworkChannel(currentRoomId);
-      renderSetupList();
-    }
+    function startTimer(seconds, onTimeout) {
+        clearInterval(timer);
+        timeLeft = seconds;
+        document.getElementById('timer-display').innerText = `${timeLeft}s`;
+        
+        timer = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer-display').innerText = `${timeLeft}s`;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                if (onTimeout) onTimeout();
+            }
+        }, 1000);
+    }
 
-    function joinRoom() {
-      const name = document.getElementById('playerNameInput').value.trim();
-      const roomId = document.getElementById('joinRoomIdInput').value.trim();
+    function runNightStep(stepIdx, suspectTarget = null) {
+        currentStep = stepIdx;
+        const roleTurn = STEPS[stepIdx];
+        const actionBox = document.getElementById('action-buttons');
+        const prompt = document.getElementById('action-prompt');
+        actionBox.innerHTML = '';
+        selectedTargets = [];
 
-      if (!name) return alert('Vui lòng nhập tên của bạn!');
-      if (!roomId || roomId.length !== 5) return alert('Vui lòng nhập mã phòng gồm 5 chữ số!');
+        // Kiểm tra xem vai trò này có người nào còn sống để chơi hay không
+        const isRoleActiveInGame = players.some(p => p.role === roleTurn && p.alive);
 
-      currentRoomId = roomId;
-      isHost = false;
+        // BAN NGÀY - BIỂU QUYẾT TÌM SÓI
+        if (roleTurn === 'DAY_VOTE') {
+            document.getElementById('phase-title').innerText = "☀️ BAN NGÀY - BẦU CHỌN NGHI PHẠM";
+            prompt.innerText = "Chọn người bạn nghi ngờ là Ma Sói (Có 30 giây để chọn):";
+            startTimer(30, () => {
+                if (isHost && selectedTargets.length === 0) autoSelectRandomTarget('DAY_VOTE');
+            });
+            renderDayVoteButtons();
+            return;
+        }
 
-      document.getElementById('roomSection').classList.add('hidden');
-      document.getElementById('setupPhase').classList.remove('hidden');
-      document.getElementById('displayRoomId').innerText = currentRoomId;
+        // BAN NGÀY - XÁC NHẬN TREO CỔ
+        if (roleTurn === 'DAY_CONFIRM') {
+            document.getElementById('phase-title').innerText = "☀️ BAN NGÀY - XÁC NHẬN XỬ TỬ";
+            prompt.innerText = `Biểu quyết: Có đồng ý treo cổ [${suspectTarget}] không?`;
+            startTimer(30, () => {
+                if (isHost) nextTurnHost();
+            });
+            
+            actionBox.innerHTML = `
+                <div class="vote-confirm-box">
+                    <button class="btn-agree" onclick="handleConfirmVote(true)">👍 ĐỒNG Ý</button>
+                    <button class="btn-disagree" onclick="handleConfirmVote(false)">👎 KHÔNG ĐỒNG Ý</button>
+                </div>
+            `;
+            return;
+        }
 
-      setupNetworkChannel(currentRoomId);
+        // BAN ĐÊM
+        document.getElementById('phase-title').innerText = `🌙 BAN ĐÊM - LƯỢT: ${roleTurn.toUpperCase()}`;
 
-      // Phát tín hiệu tham gia phòng
-      players.push({ id: myPlayerId, name, role: '', isAlive: true, isCharmed: false });
-      broadcastPlayers();
-      renderSetupList();
-    }
+        // SỬA LỖI 2: Nếu không có ai giữ vai trò này hoặc người chơi đã chết -> Bỏ qua nhanh lượt này
+        if (!isRoleActiveInGame && roleTurn !== 'DAY_VOTE' && roleTurn !== 'DAY_CONFIRM') {
+            prompt.innerText = `Quản trò đang gọi ${roleTurn}... (Không có phản hồi)`;
+            startTimer(3, () => {
+                if (isHost) nextTurnHost();
+            });
+            return;
+        }
 
-    function broadcastPlayers() {
-      if (channel) {
-        channel.postMessage({ type: 'SYNC_PLAYERS', players });
-      }
-    }
+        if (myRole === roleTurn && players.find(p => p.id === myId)?.alive) {
+            prompt.innerText = `ĐẾN LƯỢT BẠN (${myRole}): Có 30 giây để thực hiện hành động!`;
+            startTimer(30, () => {
+                if (selectedTargets.length === 0) autoSelectRandomTarget(roleTurn);
+            });
+            renderNightButtons(roleTurn);
+        } else {
+            prompt.innerText = `Quản trò đang gọi ${roleTurn} thức dậy...`;
+            startTimer(30, () => {
+                if (isHost) nextTurnHost();
+            });
+        }
+    }
 
-    function renderSetupList() {
-      const listEl = document.getElementById('setupPlayerList');
-      listEl.innerHTML = players.map(p => `<div class="player-card"><b>${p.name}</b></div>`).join('');
-      document.getElementById('playerCountMsg').innerText = `Số lượng người chơi: ${players.length}`;
-      
-      const startBtn = document.getElementById('btnStartGame');
-      if (isHost && players.length >= 3) startBtn.classList.remove('hidden');
-      else startBtn.classList.add('hidden');
-    }
+    function renderNightButtons(role) {
+        const actionBox = document.getElementById('action-buttons');
+        let targetable = players.filter(p => p.alive);
 
-    // Quy tắc chia bài tự động
-    function assignRoles() {
-      const count = players.length;
-      let roles = [];
+        if (role === 'Ma Sói') {
+            targetable = targetable.filter(p => p.role !== 'Ma Sói');
+        }
 
-      if (count <= 5) {
-        roles.push('Villager', 'Werewolf');
-        roles = roles.concat(shuffleArray(ROLE_POOL_SMALL).slice(0, count - 2));
-      } else if (count > 5 && count < 10) {
-        const villagerNum = Math.floor(Math.random() * 2) + 1;
-        for (let i = 0; i < villagerNum; i++) roles.push('Villager');
-        roles.push('Werewolf', 'Werewolf');
-        roles.push(Math.random() < 0.5 ? 'Cupid' : 'Flautist');
-        
-        const remaining = count - roles.length;
-        roles = roles.concat(shuffleArray(ROLE_POOL_MEDIUM).slice(0, remaining));
-      } else {
-        roles.push('Villager', 'Villager', 'Villager', 'Werewolf', 'Werewolf', 'WolfCub', 'Cupid', 'Seer', 'Bodyguard', 'Witch');
-        while (roles.length < count) roles.push('Villager');
-      }
+        targetable.forEach(p => {
+            const btn = document.createElement('button');
+            btn.className = 'action-btn';
+            btn.id = `btn-p-${p.id}`;
+            
+            if (role === 'Ma Sói') btn.innerText = `🐺 Cắn tiêu diệt: ${p.name}`;
+            else if (role === 'Bảo Vệ') btn.innerText = `🛡️ Bảo vệ: ${p.name}`;
+            else if (role === 'Tiên Tri') btn.innerText = `🔮 Soi bản chất: ${p.name}`;
+            else if (role === 'Cupid') btn.innerText = `💘 Chọn ghép đôi: ${p.name}`;
+            else if (role === 'Phù Thủy') btn.innerText = `🧪 Dùng bình lên: ${p.name}`;
 
-      roles = shuffleArray(roles);
-      players.forEach((p, idx) => { p.role = roles[idx]; });
-    }
+            btn.onclick = () => handleTargetSelection(p, role, btn);
+            actionBox.appendChild(btn);
+        });
+    }
 
-    function shuffleArray(arr) {
-      return [...arr].sort(() => Math.random() - 0.5);
-    }
+    function handleTargetSelection(targetPlayer, role, btnElement) {
+        if (role === 'Cupid') {
+            if (selectedTargets.some(t => t.id === targetPlayer.id)) {
+                selectedTargets = selectedTargets.filter(t => t.id !== targetPlayer.id);
+                btnElement.classList.remove('selected');
+            } else {
+                if (selectedTargets.length < 2) {
+                    selectedTargets.push(targetPlayer);
+                    btnElement.classList.add('selected');
+                }
+            }
 
-    function startGame() {
-      assignRoles();
-      if (channel) {
-        channel.postMessage({ type: 'GAME_STARTED', players });
-      }
-      document.getElementById('setupPhase').classList.add('hidden');
-      document.getElementById('gamePhase').classList.remove('hidden');
-      log(`Game bắt đầu với ${players.length} người chơi!`);
-      startNight();
-    }
+            if (selectedTargets.length === 2) {
+                clearInterval(timer);
+                document.getElementById('action-buttons').innerHTML = `<p style="color:#10b981;">✅ Đã ghép đôi: <b>${selectedTargets[0].name}</b> & <b>${selectedTargets[1].name}</b></p>`;
+                
+                let loverIds = [selectedTargets[0].id, selectedTargets[1].id];
+                lovers = loverIds;
+                broadcast({ type: 'set-lovers', lovers: loverIds });
+                
+                // SỬA LỖI 1: Gửi báo cáo hoàn tất lượt về Host để chuyển ngay
+                sendToHost({ type: 'action-done' });
+            }
+            return;
+        }
 
-    function log(msg) {
-      const logsEl = document.getElementById('gameLogs');
-      logsEl.innerHTML += `<div>> ${msg}</div>`;
-      logsEl.scrollTop = logsEl.scrollHeight;
-    }
+        selectedTargets = [targetPlayer];
+        clearInterval(timer);
+        document.getElementById('action-buttons').innerHTML = `<p style="color:#10b981;">✅ Bạn đã chọn: <b>${targetPlayer.name}</b></p>`;
+        
+        if (role === 'Tiên Tri') {
+            const isWolf = targetPlayer.role === 'Ma Sói';
+            alert(`Kết quả soi: ${targetPlayer.name} ${isWolf ? 'là MA SÓI! 🐺' : 'không phải Ma Sói 😇'}`);
+        }
 
-    function renderBoard() {
-      const listEl = document.getElementById('gamePlayerList');
-      listEl.innerHTML = players.map(p => `
-        <div class="player-card ${!p.isAlive ? 'dead' : ''}">
-          <b>${p.name}</b><br>
-          <small>(${p.isAlive ? translateRole(p.role) : 'Đã Chết'})</small>
-        </div>
-      `).join('');
-    }
+        // SỬA LỖI 1: Báo cho Host rằng người chơi này đã hoàn thành lượt
+        sendToHost({ type: 'action-done' });
+    }
 
-    function translateRole(role) {
-      const map = { Villager: 'Dân Thường', Werewolf: 'Ma Sói', Seer: 'Tiên Tri', Bodyguard: 'Bảo Vệ', Witch: 'Phù Thủy', Hunter: 'Thợ Săn', WolfCub: 'Sói Con', Sorceress: 'Pháp Sư Sói', Cupid: 'Cupid', Flautist: 'Thổi Sáo' };
-      return map[role] || role;
-    }
+    function eliminatePlayer(playerId) {
+        let victim = players.find(p => p.id === playerId);
+        if (victim && victim.alive) {
+            victim.alive = false;
+            log(`💀 ${victim.name} đã bị loại khỏi cuộc chơi!`);
+            broadcast({ type: 'player-died', deadId: playerId });
 
-    // ĐIỀU HÀNH BAN ĐÊM
-    function startNight() {
-      gameState.phase = 'NIGHT';
-      gameState.actions = { wolfTarget: null, protectedTarget: null, seerTarget: null, witchSave: false, witchPoison: null };
-      startNightUI();
-    }
+            if (lovers.includes(playerId)) {
+                let otherLoverId = lovers.find(id => id !== playerId);
+                let otherLover = players.find(p => p.id === otherLoverId);
+                if (otherLover && otherLover.alive) {
+                    log(`💔 ${otherLover.name} đã hy sinh theo người ghép đôi của mình!`);
+                    eliminatePlayer(otherLoverId);
+                }
+            }
+            renderPlayers();
+        }
+    }
 
-    function startNightUI() {
-      const badge = document.getElementById('phaseBadge');
-      badge.className = 'phase-badge phase-night';
-      badge.innerText = '🌙 BAN ĐÊM (Cả làng nhắm mắt)';
-      
-      if (isHost) {
-        document.getElementById('btnNextPhase').classList.remove('hidden');
-      }
-      document.getElementById('btnDayVote').classList.add('hidden');
-      
-      log('--- BAN ĐÊM BẮT ĐẦU ---');
-      renderBoard();
-      setupNightControls();
-    }
+    function handlePlayerDeath(deadId) {
+        let p = players.find(x => x.id === deadId);
+        if (p) p.alive = false;
+        renderPlayers();
+    }
 
-    function setupNightControls() {
-      const ctrl = document.getElementById('actionControls');
-      const alivePlayers = players.filter(p => p.isAlive);
-      
-      ctrl.innerHTML = `
-        <label><b>1. Bầy Sói chọn cắn:</b></label>
-        <select id="wolfSelect">
-          <option value="">-- Chọn nạn nhân --</option>
-          ${alivePlayers.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
-        </select>
-        
-        <label><b>2. Bảo Vệ chọn cứu:</b></label>
-        <select id="guardSelect">
-          <option value="">-- Chọn người bảo vệ --</option>
-          ${alivePlayers.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
-        </select>
+    function renderDayVoteButtons() {
+        const actionBox = document.getElementById('action-buttons');
+        players.filter(p => p.alive).forEach(p => {
+            const btn = document.createElement('button');
+            btn.className = 'action-btn';
+            btn.innerText = `🗳️ Bầu chọn: ${p.name}`;
+            btn.onclick = () => {
+                selectedTargets = [p];
+                clearInterval(timer);
+                actionBox.innerHTML = `<p style="color:#10b981;">✅ Bạn đã chọn vote: <b>${p.name}</b></p>`;
+                if (isHost) setTimeout(() => advanceStep(6, p.name), 1500);
+            };
+            actionBox.appendChild(btn);
+        });
+    }
 
-        <label><b>3. Phù Thủy chọn độc:</b></label>
-        <select id="witchPoisonSelect">
-          <option value="">-- Không dùng bình độc --</option>
-          ${alivePlayers.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
-        </select>
-      `;
-      document.getElementById('currentTurnInfo').innerText = 'Quản trò lần lượt gọi các chức năng thức dậy và chọn mục tiêu trên.';
-    }
+    function handleConfirmVote(isAgree) {
+        clearInterval(timer);
+        document.getElementById('action-buttons').innerHTML = `<p style="color:#10b981;">✅ Bạn đã chọn: <b>${isAgree ? 'ĐỒNG Ý' : 'KHÔNG ĐỒNG Ý'}</b></p>`;
+        if (isHost) {
+            log(`📊 Đã ghi nhận biểu quyết.`);
+            setTimeout(() => nextTurnHost(), 2000);
+        }
+    }
 
-    function nextPhase() {
-      if (gameState.phase === 'NIGHT') {
-        resolveNight();
-      }
-    }
+    function autoSelectRandomTarget(role) {
+        let available = players.filter(p => p.alive);
+        if (role === 'Ma Sói') available = available.filter(p => p.role !== 'Ma Sói');
+        
+        if (available.length > 0) {
+            if (role === 'Cupid' && available.length >= 2) {
+                const pick1 = available[0];
+                const pick2 = available[1];
+                selectedTargets = [pick1, pick2];
+                let loverIds = [pick1.id, pick2.id];
+                lovers = loverIds;
+                broadcast({ type: 'set-lovers', lovers: loverIds });
+                sendToHost({ type: 'action-done' });
+            } else {
+                const randomPick = available[Math.floor(Math.random() * available.length)];
+                let btn = document.getElementById(`btn-p-${randomPick.id}`);
+                if (btn) handleTargetSelection(randomPick, role, btn);
+                else sendToHost({ type: 'action-done' });
+            }
+        } else {
+            sendToHost({ type: 'action-done' });
+        }
+    }
 
-    function resolveNight() {
-      const wolfTargetId = document.getElementById('wolfSelect').value;
-      const guardTargetId = document.getElementById('guardSelect').value;
-      const witchPoisonId = document.getElementById('witchPoisonSelect').value;
+    function showRoom() {
+        document.getElementById('setup-section').classList.add('hidden');
+        document.getElementById('room-section').classList.remove('hidden');
+    }
 
-      let deadThisNight = [];
+    function renderPlayers() {
+        const list = document.getElementById('player-list');
+        list.innerHTML = '';
+        players.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'player-card';
+            const statusText = p.alive ? `<span style="color:#10b981;">● Sống</span>` : `<span style="color:#ef4444;">✖ Đã chết</span>`;
+            div.innerHTML = `<span>${p.name}</span> ${statusText}`;
+            list.appendChild(div);
+        });
+        document.getElementById('player-count').innerText = players.length;
+    }
 
-      if (wolfTargetId && wolfTargetId !== guardTargetId) {
-        deadThisNight.push(wolfTargetId);
-      }
+    function log(text) {
+        const logBox = document.getElementById('game-log');
+        logBox.innerHTML += `<div>${text}</div>`;
+        logBox.scrollTop = logBox.scrollHeight;
+    }
 
-      if (witchPoisonId) {
-        deadThisNight.push(witchPoisonId);
-      }
+    function broadcast(data) { 
+        connections.forEach(conn => {
+            if (conn.open) conn.send(data);
+        }); 
+    }
+</script>
 
-      deadThisNight.forEach(id => {
-        const p = players.find(x => x.id == id);
-        if (p) {
-          p.isAlive = false;
-          if (p.role === 'WolfCub') gameState.wolfKillsCount = 2;
-        }
-      });
-
-      gameState.phase = 'DAY';
-      const badge = document.getElementById('phaseBadge');
-      badge.className = 'phase-badge phase-day';
-      badge.innerText = '☀️ BAN NGÀY (Cả làng thức dậy)';
-
-      document.getElementById('btnNextPhase').classList.add('hidden');
-      if (isHost) {
-        document.getElementById('btnDayVote').classList.remove('hidden');
-      }
-
-      log('--- BAN NGÀY BẮT ĐẦU ---');
-      if (deadThisNight.length > 0) {
-        const names = deadThisNight.map(id => players.find(p => p.id == id).name).join(', ');
-        log(`Đêm qua, người bị hại là: ${names}`);
-      } else {
-        log('Đêm qua là một đêm bình yên, không ai chết!');
-      }
-
-      setupDayControls();
-      renderBoard();
-      if (channel) channel.postMessage({ type: 'SYNC_STATE', players });
-      checkWinCondition();
-    }
-
-    function setupDayControls() {
-      const ctrl = document.getElementById('actionControls');
-      const alivePlayers = players.filter(p => p.isAlive);
-
-      ctrl.innerHTML = `
-        <label><b>Bỏ phiếu treo cổ ban ngày:</b></label>
-        <select id="voteSelect">
-          <option value="">-- Chọn người bị treo cổ --</option>
-          ${alivePlayers.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
-        </select>
-      `;
-      document.getElementById('currentTurnInfo').innerText = 'Cả làng thảo luận và bỏ phiếu chọn người khả nghi nhất để treo cổ.';
-    }
-
-    function resolveDayVote() {
-      const voteTargetId = document.getElementById('voteSelect').value;
-      if (!voteTargetId) return alert('Vui lòng chọn người bị treo cổ!');
-
-      const executedPlayer = players.find(p => p.id == voteTargetId);
-      if (executedPlayer) {
-        executedPlayer.isAlive = false;
-        log(`Dân làng đã quyết định treo cổ: ${executedPlayer.name}`);
-      }
-
-      renderBoard();
-      if (channel) channel.postMessage({ type: 'SYNC_STATE', players });
-      if (!checkWinCondition()) {
-        setTimeout(() => startNight(), 2000);
-      }
-    }
-
-    function checkWinCondition() {
-      const aliveWolves = players.filter(p => p.isAlive && ['Werewolf', 'WolfCub'].includes(p.role));
-      const aliveVillagers = players.filter(p => p.isAlive && !['Werewolf', 'WolfCub'].includes(p.role));
-
-      if (aliveWolves.length === 0) {
-        alert('CHÚC MỪNG! Phe Dân Làng đã chiến thắng!');
-        log('>>> GAME KẾT THÚC: Phe Dân Làng thắng!');
-        return true;
-      }
-      if (aliveWolves.length >= aliveVillagers.length) {
-        alert('CHÚC MỪNG! Phe Ma Sói đã chiến thắng!');
-        log('>>> GAME KẾT THÚC: Phe Ma Sói thắng!');
-        return true;
-      }
-      return false;
-    }
-  </script>
 </body>
-</html>
+</html> 
