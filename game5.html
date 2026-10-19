@@ -9,7 +9,638 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verda<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ai Là Triệu Phú: Phiên Bản 20/10</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0d0614;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .game-container {
+            width: 90%;
+            max-width: 800px;
+            background: linear-gradient(135deg, #1f0c24 0%, #12051a 100%);
+            border: 2px solid #ff4d88;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 0 25px rgba(255, 77, 136, 0.4);
+            position: relative;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 77, 136, 0.3);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        .lifelines {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .lifeline-btn {
+            background: linear-gradient(135deg, #ff4d88, #ff1a66);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(255, 26, 102, 0.3);
+        }
+        .lifeline-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #ff6699, #ff3377);
+        }
+        .lifeline-btn:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .sub-text {
+            text-align: center;
+            font-style: italic;
+            color: #ffb3cc;
+            margin-bottom: 15px;
+        }
+        .question-box {
+            background: rgba(45, 15, 56, 0.7);
+            border: 2px solid #ff4d88;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            font-size: 1.25rem;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 15px rgba(255, 77, 136, 0.2);
+        }
+        .answers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        @media (max-width: 600px) {
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .answer-btn {
+            background: linear-gradient(135deg, #3d124e, #280a33);
+            border: 2px solid #ff4d88;
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-size: 1.05rem;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .answer-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #5c1b73, #3d124e);
+            border-color: #ff99bb;
+            transform: translateY(-2px);
+        }
+        .answer-btn.correct {
+            background: linear-gradient(135deg, #28a745, #1e7e34) !important;
+            border-color: #55efc4 !important;
+        }
+        .answer-btn.wrong {
+            background: linear-gradient(135deg, #dc3545, #bd2130) !important;
+            border-color: #ff7675 !important;
+        }
+        .footer-nav {
+            text-align: center;
+        }
+        .back-link {
+            color: #ffb3cc;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+        .back-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+        .result-screen {
+            text-align: center;
+            padding: 20px;
+        }
+        .result-screen h2 {
+            color: #ff4d88;
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+        .result-screen p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #ffb3cc;
+        }
+        .primary-btn {
+            background: linear-gradient(135deg, #ff4d88, #ff1a66);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 26, 102, 0.4);
+            transition: 0.3s;
+        }
+        .primary-btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container" id="game-app"></div>
+
+    <script>
+        const questionBank = {
+            easy: [
+                { q: "Ngày 20/10 hàng năm là ngày kỷ niệm gì tại Việt Nam?", a: ["Ngày Quốc tế Phụ nữ", "Ngày Phụ nữ Việt Nam", "Ngày Gia đình Việt Nam", "Ngày Nhà giáo Việt Nam"], correct: 1 },
+                { q: "Lời ru của mẹ thường bắt đầu bằng từ nào sau đây?", a: ["À ơi", "Ối giời", "Ha ha", "Ô hô"], correct: 0 },
+                { q: "Loài hoa nào thường được chọn làm biểu tượng cho tình mẫu tử, lòng biết ơn mẹ trong ngày lễ Vu Lan?", a: ["Hoa hồng", "Hoa hướng dương", "Hoa sen", "Hoa lan"], correct: 0 },
+                { q: "Nhân vật người mẹ trong truyện cổ tích 'Sự tích cây vú sữa' đã biến thành cây gì để nuôi con?", a: ["Cây mít", "Cây vú sữa", "Cây xoài", "Cây ổi"], correct: 1 },
+                { q: "Hai Bà Trưng là hai chị em có tên là gì?", a: ["Trưng Trắc - Trưng Nhị", "Trưng Trắc - Trưng Triệu", "Trưng Trắc - Trưng Trắc", "Trưng Nhị - Trưng Ba"], correct: 0 },
+                { q: "Điền từ còn thiếu vào câu thành ngữ: 'Chỗ ướt mẹ nằm, chỗ ... con lăn'?", a: ["Khô", "Ráo", "Sạch", "Ấm"], correct: 1 },
+                { q: "Bộ trang phục truyền thống tôn vinh nét đẹp của người phụ nữ Việt Nam là gì?", a: ["Áo tứ thân", "Áo bà ba", "Áo dài", "Áo yếm"], correct: 2 },
+                { q: "Bài thơ 'Sóng' - một tác phẩm nổi tiếng về tâm trạng người con gái khi yêu - là của nhà thơ nữ nào?", a: ["Hồ Xuân Hương", "Xuân Quỳnh", "Đoàn Thị Điểm", "Bà Huyện Thanh Quan"], correct: 1 },
+                { q: "Truyện cổ tích nào kể về một người con gái hiền lành, hiếu thảo, trải qua nhiều kiếp hóa thân (chim vàng anh, cây xoan đào...) trước khi trở lại làm hoàng hậu?", a: ["Sọ Dừa", "Tấm Cám", "Thạch Sanh", "Sự tích trầu cau"], correct: 1 },
+                { q: "Ai là tác giả của tác phẩm 'Nhật ký Đặng Thùy Trâm'?", a: ["Đặng Thùy Trâm", "Nguyễn Văn Thạc", "Lê Minh Khuê", "Xuân Quỳnh"], correct: 0 },
+                { q: "Đâu là tên một bài hát rất quen thuộc của nhạc sĩ Nguyễn Văn Tý viết về người phụ nữ đảm đang?", a: ["Dáng đứng Bến Tre", "Người con gái sông La", "Mẹ yêu con", "Bài ca phụ nữ Việt Nam"], correct: 0 },
+                { q: "Đâu là tên một bộ phim truyền hình nổi tiếng của Việt Nam kể về cuộc sống của bốn mẹ con trong một gia đình?", a: ["Sống chung với mẹ chồng", "Thương ngày nắng về", "Về nhà đi con", "Hướng dương ngược nắng"], correct: 1 },
+                { q: "Điền từ còn thiếu vào câu ca dao sau: \"Công cha như núi Thái Sơn, nghĩa ... như nước trong nguồn chảy ra\"?", a: ["Thầy", "Cô", "Mẹ", "Anh"], correct: 2 },
+                { q: "Loại quả nào thường được ví với hình ảnh người phụ nữ mang bầu trong câu đố dân gian: \"Da cóc mà bọc trứng gà...\"?", a: ["Quả mít", "Quả sầu riêng", "Quả na", "Quả mít mật"], correct: 2 },
+                { q: "Lễ hội nào sau đây thường có hoạt động tôn vinh và cài hoa hồng lên ngực áo để bày tỏ lòng hiếu thảo với mẹ?", a: ["Lễ Vu Lan", "Lễ Trung thu", "Lễ Thất tịch", "Lễ Phật đản"], correct: 0 },
+                { q: "Truyện cổ tích nào kể về một người vợ vì chung thủy chờ chồng đi lính đến mức hóa thành đá?", a: ["Sự tích trầu cau", "Sự tích hòn Vọng Phu", "Sự tích hồ Ba Bể", "Chuyện người con gái Nam Xương"], correct: 1 },
+                { q: "Trong ngày 20/10, phái nam thường làm hành động nào sau đây để thể hiện sự quan tâm đến người phụ nữ mình yêu thương?", a: ["Tặng hoa và quà", "Đi ngủ sớm", "Đòi quà ngược lại", "Tắt điện thoại cả ngày"], correct: 0 },
+                { q: "Đâu là tên một bài hát tiếng Anh bất hủ về người mẹ của nhóm nhạc Spice Girls?", a: ["Mama", "Mother", "Goodbye", "Wannabe"], correct: 0 },
+                { q: "Trong bài thơ \"Hạt gạo làng ta\" của Trần Đăng Khoa, người mẹ đã phải lội xuống ruộng cấy lúa trong thời tiết như thế nào?", a: ["Giữa trưa tháng sáu nồng nặc", "Trời mưa bão bùng", "Đêm đông lạnh giá", "Sương mù sáng sớm"], correct: 0 },
+                { q: "Nhân vật người mẹ trong truyện cổ tích \"Thạch Sanh\" đã qua đời vì lý do gì sau khi sinh Thạch Sanh?", a: ["Bị bệnh nặng vì nghèo khổ", "Bị chằn tinh hại", "Bị ngã xuống suối", "Đi làm nương rẫy bị lạc"], correct: 0 },
+                { q: "Từ nào sau đây thường được dùng để gọi người phụ nữ sinh ra bố hoặc mẹ của mình?", a: ["Bà", "Cô", "Dì", "Mợ"], correct: 0 },
+                { q: "Điền từ còn thiếu vào câu thành ngữ phản ánh tình cảm khăng khít: \"Chị ngã em ...\"?", a: ["Nâng", "Đỡ", "Cười", "Nhìn"], correct: 0 },
+                { q: "Đâu là tên một tác phẩm truyện tranh và hoạt hình nổi tiếng thế giới kể về một cô bé mồ côi tóc đỏ sống ở trang trại?", a: ["Anne tóc đỏ dưới chái nhà xanh", "Lọ Lem", "Công chúa tóc mây", "Cô bé bán diêm"], correct: 0 },
+                { q: "Trong ngày Tết Trung thu, nhân vật nữ nào thường được nhắc đến cùng với chú Cuội trên Mặt Trăng?", a: ["Chị Hằng", "Bà Chúa Kho", "Thánh Mẫu", "Cô Tấm"], correct: 0 },
+                { q: "Món ăn nào sau đây thường được các mẹ nấu trong ngày Tết Đoan Ngọ (5/5 âm lịch) để \"diệt sâu bọ\" theo truyền thống miền Bắc?", a: ["Rượu nếp và bánh tro", "Bánh chưng", "Bánh trôi bánh chay", "Chè khoai môn"], correct: 0 },
+                { q: "Trong bài thơ \"Bếp lửa\" của Bằng Việt, người bà đã cùng cháu nhóm lên bếp lửa trong suốt bao nhiêu năm chung sống?", a: ["4 năm", "8 năm", "10 năm", "12 năm"], correct: 1 },
+                { q: "Khi viết thiệp chúc mừng ngày 20/10 cho cô giáo, từ xưng hô nào thường được học sinh sử dụng trang trọng nhất?", a: ["Kính gửi Cô", "Chào Cô", "Gửi Bạn", "Thân gửi Chị"], correct: 0 },
+                { q: "Bộ phim hoạt hình nào của Disney kể về một cô gái dũng cảm cải trang thành nam giới để thay cha đi tòng quân?", a: ["Hoa Mộc Lan (Mulan)", "Người đẹp và Quái vật (Beauty and the Beast)", "Nàng tiên cá (The Little Mermaid)", "Công chúa ngủ trong rừng (Sleeping Beauty)"], correct: 0 },
+                { q: "Điền từ còn thiếu vào câu thành ngữ nói về tài nội trợ của người phụ nữ: \"Đàn ông xây nhà, đàn bà xây ...\"?", a: ["Tổ ấm", "Gian bếp", "Hạnh phúc", "Tương lai"], correct: 0 },
+                { q: "Đâu là tên một bài hát thiếu nhi rất nổi tiếng của nhạc sĩ Phan Huỳnh Điểu ca ngợi tình cảm của cô giáo và mẹ đối với bé?", a: ["Ngày đầu tiên đi học", "Cô và mẹ", "Đi học", "Bụi phấn"], correct: 1 },
+                { q: "Quốc hoa chính thức của Việt Nam là loài hoa nào?", a: ["Hoa sen", "Hoa hồng", "Hoa mai", "Hoa đào"], correct: 0 },
+                { q: "Hoa hậu Thùy Tiên đăng quang kỳ thi Miss Grand International vào năm nào?", a: ["2021", "2020", "2022", "2019"], correct: 0 },
+                { q: "Hình ảnh người mẹ cầm gậy đánh đuổi giặc Ngoại xâm xuất hiện trong truyền thuyết nào?", a: ["Thánh Gióng", "Sơn Tinh Thủy Tinh", "Bánh Chưng Bánh Giầy", "Sự tích Con Rồng Cháu Tiên"], correct: 0 },
+                { q: "Vị vua nào của Việt Nam nổi tiếng với lòng hiếu thảo, viết cuốn sách 'Khiêm Cung Ký' dâng lên mẹ?", a: ["Vua Tự Đức", "Vua Minh Mạng", "Vua Gia Long", "Vua Khải Định"], correct: 0 }
+            ],
+            medium: [
+                { q: "Tổ chức nào được thành lập vào ngày 20/10/1930, tiền thân của Hội Liên hiệp Phụ nữ Việt Nam ngày nay?", a: ["Hội Phụ nữ Cứu quốc", "Hội Phụ nữ Phản đế Việt Nam", "Hội Phụ nữ Dân chủ", "Hội Phụ nữ Giải phóng"], correct: 1 },
+                { q: "Nữ thi sĩ nào được mệnh danh là 'Bà chúa thơ Nôm'?", a: ["Bà Huyện Thanh Quan", "Hồ Xuân Hương", "Đoàn Thị Điểm", "Sương Nguyệt Anh"], correct: 1 },
+                { q: "Nữ anh hùng nào được người dân miền Nam kính trọng gọi bằng danh xưng 'Má Sáu Ngẫu'?", a: ["Võ Thị Sáu", "Nguyễn Thị Định", "Nguyễn Thị Thập", "Ngô Thị Tuyết"], correct: 2 },
+                { q: "Ai là nữ phi hành gia đầu tiên bay vào vũ trụ?", a: ["Valentina Tereshkova", "Sally Ride", "Svetlana Savitskaya", "Mae Jemison"], correct: 0 },
+                { q: "Bức tượng nổi tiếng 'Mẹ Việt Nam Anh hùng' lớn nhất cả nước lấy nguyên mẫu từ người mẹ nào?", a: ["Mẹ Thứ", "Mẹ Suốt", "Mẹ Rơm", "Mẹ Tơm"], correct: 0 },
+                { q: "Nhân vật người vợ trong tác phẩm 'Chuyện người con gái Nam Xương' của Nguyễn Dữ tên là gì?", a: ["Vũ Thị Thiết", "Kiều Nguyệt Nga", "Nguyễn Thị Duệ", "Lê Ngọc Hân"], correct: 0 },
+                { q: "Tác giả của cuốn tiểu thuyết kinh điển 'Kiêu hãnh và định kiến' (Pride and Prejudice) là ai?", a: ["Charlotte Brontë", "Jane Austen", "Emily Brontë", "Virginia Woolf"], correct: 1 },
+                { q: "Nữ ca sĩ nào của Việt Nam vinh dự được mệnh danh là 'Họa mi tóc nâu'?", a: ["Mỹ Tâm", "Hồ Ngọc Hà", "Hồng Nhung", "Thanh Lam"], correct: 0 },
+                { q: "Bộ phim điện ảnh Việt Nam nào kể về cuộc đời của một người mẹ câm điếc nuôi con, đã đoạt nhiều giải thưởng lớn?", a: ["Nhà bà Nữ", "Cu li không bao giờ khóc", "Tro tàn rực rỡ", "Lật mặt 7: Một điều ước"], correct: 3 },
+                { q: "Nhà khoa học nữ Marie Curie là người đầu tiên và duy nhất nhận 2 giải Nobel ở 2 lĩnh vực nào?", a: ["Vật lý và Hóa học", "Vật lý và Sinh học", "Hóa học và Y học", "Toán học và Vật lý"], correct: 0 },
+                { q: "Diva nào của làng nhạc Việt nổi tiếng với ca khúc 'Chị Tôi' của nhạc sĩ Trọng Tấn?", a: ["Mỹ Linh", "Hồng Nhung", "Thanh Lam", "Hà Trần"], correct: 0 },
+                { q: "Nữ vận động viên điền kinh nào của Việt Nam được mệnh danh là 'Nữ hoàng tốc độ' Đông Nam Á?", a: ["Lê Tú Chinh", "Quách Thị Lan", "Nguyen Thị Oanh", "Vũ Thị Hương"], correct: 3 },
+                { q: "Hình ảnh người phụ nữ gánh nước, cấy lúa được in trên tờ tiền giấy mệnh giá bao nhiêu cũ của Việt Nam?", a: ["200 đồng", "500 đồng", "100 đồng", "2000 đồng"], correct: 0 }
+            ],
+            hard: [
+                { q: "Nữ tướng nào là người chỉ huy 'Đội quân tóc dài' trong phong trào Đồng Khởi Bến Tre?", a: ["Nguyễn Thị Định", "Nguyễn Thị Minh Khai", "Hà Thị Quế", "Trương Mỹ Hoa"], correct: 0 },
+                { q: "Sương Nguyệt Anh - con gái nhà thơ Nguyễn Đình Chiểu - là nữ tổng biên tập đầu tiên của tờ báo nào?", a: ["Gia Định Báo", "Nữ Giới Chung", "Phụ nữ Tân văn", "Tiếng Dân"], correct: 1 },
+                { q: "Ai là người phụ nữ đầu tiên giữ chức vụ Chủ tịch Quốc hội nước CHXHCN Việt Nam?", a: ["Tòng Thị Phóng", "Nguyễn Thị Kim Ngân", "Trương Thị Mai", "Nguyễn Thị Bình"], correct: 1 },
+                { q: "Cuốn sử thi 'Đẻ đất đẻ nước' của dân tộc nào ca ngợi vai trò khai thiên lập địa của người phụ nữ (Mẹ Biêu)?", a: ["Người Thái", "Người Mường", "Người Tày", "Người Ê-đê"], correct: 1 },
+                { q: "Nữ hoàng duy nhất trong lịch sử các triều đại phong kiến Việt Nam là ai?", a: ["Lý Chiêu Hoàng", "Dương Vân Nga", "Nguyên phi Ỷ Lan", "Lê Ngọc Hân"], correct: 0 },
+                { q: "Trùm phát xít Adolf Hitler từng gọi người phụ nữ nào là 'Người phụ nữ nguy hiểm nhất châu Âu'?", a: ["Margaret Thatcher", "Hoàng thái hậu Elizabeth (Anh)", "Eleanor Roosevelt", "Marie Curie"], correct: 1 },
+                { q: "Bản dịch tác phẩm 'Chinh phụ ngâm' được sử dụng phổ biến nhất hiện nay là của ai?", a: ["Đặng Trần Côn", "Đoàn Thị Điểm", "Hồ Xuân Hương", "Bà Huyện Thanh Quan"], correct: 1 },
+                { q: "Vận động viên nữ nào được mệnh danh là 'Cô gái vàng' của Thể dục dụng cụ Việt Nam với 3 HCV SEA Games 28?", a: ["Phan Thị Hà Thanh", "Nguyễn Hà Thanh", "Đỗ Thị Ngân Thương", "Nguyễn Thị Ánh Viên"], correct: 0 },
+                { q: "Định luật vật lý/thiên văn học nào được đặt theo tên của nhà toán học nữ người Đức Emmy Noether?", a: ["Định lý Noether", "Định luật bảo toàn khối lượng", "Thuyết tương đối rộng", "Hiệu ứng Doppler"], correct: 0 },
+                { q: "Nữ văn sĩ đầu tiên của châu Á đoạt giải Nobel Văn học (năm 1938) là ai?", a: ["Pearl S. Buck", "Toni Morrison", "Gabriela Mistral", "Nadine Gordimer"], correct: 0 },
+                { q: "Tác phẩm văn học nổi tiếng \"Hòn Đất\" của nhà văn Anh Đức viết về cuộc chiến đấu anh dũng của một nữ du kích có tên là gì?", a: ["Chị Sứ", "Chị Út Tịch", "Chị Út Tố", "Chị Lê Thị Hồng Gấm"], correct: 0 },
+                { q: "Đại hội đại biểu Phụ nữ toàn quốc lần thứ nhất (tháng 4/1950) đã bầu ai làm Chủ tịch chính thức đầu tiên của Hội Liên hiệp Phụ nữ Việt Nam?", a: ["Lê Thị Xuyến", "Nguyễn Thị Thập", "Hà Thị Quế", "Nguyễn Thị Minh Khai"], correct: 0 },
+                { q: "Trong bài thơ nổi tiếng \"Núi Đôi\" của nhà thơ Vũ Cao, nhân vật nữ liệt sĩ được lấy nguyên mẫu từ ai ngoài đời thực?", a: ["Trần Thị Bắc", "Võ Thị Sáu", "Nguyễn Thị Chiên", "Bùi Thị Cúc"], correct: 0 },
+                { q: "Trong thần thoại Hy Lạp, vị nữ thần nào được sinh ra từ bọt biển và là biểu tượng của tình yêu, sắc đẹp?", a: ["Athena", "Aphrodite", "Artemis", "Hera"], correct: 1 },
+                { q: "Trong văn hóa dân gian Việt Nam, lễ hội Đền Hai Bà Trưng (Mê Linh, Hà Nội) chính thức được tổ chức vào ngày nào âm lịch hàng năm?", a: ["Mùng 6 tháng Giêng", "Mùng 10 tháng Ba", "Rằm tháng Tám", "Mùng 3 tháng Ba"], correct: 0 },
+                { q: "Cuốn tiểu thuyết kinh điển \"Trở về Ê-đên\" là sáng tác của nữ tác giả nào?", a: ["Margaret Mitchell", "Rosalind Miles", "Colleen McCullough", "Agatha Christie"], correct: 1 },
+                { q: "Nữ thi sĩ nào là tác giả của bài thơ \"Bánh trôi nước\", mượn hình ảnh chiếc bánh để nói về thân phận chìm nổi của người phụ nữ xưa?", a: ["Hồ Xuân Hương", "Bà Huyện Thanh Quan", "Đoàn Thị Điểm", "Xuân Quỳnh"], correct: 0 },
+                { q: "Ai là nữ vận động viên đầu tiên trong lịch sử thể thao Việt Nam giành được Huy chương Bạc tại một kỳ Thế vận hội Olympic?", a: ["Trần Hiếu Ngân", "Nguyễn Thị Ánh Viên", "Lê Tú Chinh", "Hoàng Xuân Vinh"], correct: 0 },
+                { q: "Trong văn học trung đại Việt Nam, nhân vật Thúy Kiều mang họ gì?", a: ["Vương", "Nguyễn", "Thúc", "Kim"], correct: 0 },
+                { q: "\"Tứ bất tử\" trong tín ngưỡng dân gian Việt Nam bao gồm ba vị nam thần và một vị nữ thần duy nhất. Vị nữ thần đó là ai?", a: ["Thánh Mẫu Liễu Hạnh", "Thiên Y A Na", "Bà Chúa Kho", "Mẫu Thượng Ngàn"], correct: 0 },
+                { q: "Nữ anh hùng nào được nhắc đến trong câu hát: \"Người con gái trẻ măng, giặc đổ súng vào lòng chị nát, chị vẫn đứng vững vàng như một nhành mai\"?", a: ["Võ Thị Sáu", "Lê Thị Hồng Gấm", "Nguyễn Thị Minh Khai", "Mạc Thị Bưởi"], correct: 1 },
+                { q: "Quốc gia Đông Nam Á nào có nữ Tổng thống đầu tiên là con gái của vị Tổng thống lập quốc?", a: ["Philippines", "Indonesia", "Thái Lan", "Singapore"], correct: 1 },
+                { q: "Trong tác phẩm \"Vợ nhặt\" của Kim Lân, nhân vật \"thị\" theo Tràng về làm vợ chỉ sau khi được ăn mấy bát bánh đúc?", a: ["Hai bát", "Ba bát", "Bốn bát", "Năm bát"], correct: 2 },
+                { q: "Nữ văn sĩ người Anh J.K. Rowling đã viết trọn vẹn bộ tiểu thuyết bom tấn Harry Potter gồm bao nhiêu tập truyện chính thức?", a: ["6 tập", "7 tập", "8 tập", "9 tập"], correct: 1 },
+                { q: "Ai là tác giả của bức tranh sơn dầu nổi tiếng \"Thiếu nữ bên hoa huệ\" - một biểu tượng cho vẻ đẹp thanh lịch của người con gái Hà Thành xưa?", a: ["Tô Ngọc Vân", "Bùi Xuân Phái", "Nguyễn Gia Trí", "Trần Văn Cẩn"], correct: 0 },
+                { q: "Công chúa Huyền Trân, người có vai trò lịch sử to lớn trong việc mở rộng bờ cõi về phương Nam, là con gái của vị vua nào nhà Trần?", a: ["Trần Nhân Tông", "Trần Thánh Tông", "Trần Thái Tông", "Trần Anh Tông"], correct: 0 },
+                { q: "Giải thưởng cao quý mang tên một nữ giáo sư, nhà toán học nổi tiếng của Việt Nam dùng để trao tặng cho các nhà khoa học nữ xuất sắc là giải gì?", a: ["Giải thưởng Kovalevskaia", "Giải thưởng Tạ Quang Bửu", "Giải thưởng Hồ Chí Minh", "Giải thưởng L'Oréal-UNESCO"], correct: 0 },
+                { q: "Điền từ còn thiếu vào câu khẩu hiệu truyền thống của phong trào phụ nữ \"Ba đảm đang\": \"Đảm đang sản xuất và công tác; Đảm đang gia đình; Đảm đang ...\"?", a: ["Phục vụ chiến đấu", "Học tập tiến bộ", "Nuôi dạy con ngoan", "Tăng gia sản xuất"], correct: 0 },
+                { q: "Ca khúc \"Mẹ Việt Nam anh hùng\" với câu hát mở đầu \"Mẹ về đứng dưới mưa, che từng căn nhà nhỏ...\" là một sáng tác của nhạc sĩ nào?", a: ["An Thuyên", "Phan Huỳnh Điểu", "Trịnh Công Sơn", "Xuân Hồng"], correct: 0 },
+                { q: "Bộ phim kinh điển \"Cuốn theo chiều gió\" xoay quanh cuộc đời kiên cường vượt qua chiến tranh của nữ nhân vật chính tên là gì?", a: ["Scarlett O'Hara", "Melanie Hamilton", "Jane Eyre", "Elizabeth Bennet"], correct: 0 },
+                { q: "Nữ anh hùng Võ Thị Sáu quê ở tỉnh nào hiện nay?", a: ["Bà Rịa - Vũng Tàu", "Đồng Nai", "Bến Tre", "Long An"], correct: 0 },
+                { q: "Ai là người phụ nữ đầu tiên đoạt giải thưởng Nobel Hòa bình vào năm 1905?", a: ["Bertha von Suttner", "Thánh Teresa", "Aung San Suu Kyi", "Malala Yousafzai"], correct: 0 },
+                { q: "Bộ phim 'Mẹ Vắng Nhà' của đạo diễn Nguyễn Khánh Dư được chuyển thể từ tác phẩm cùng tên của nhà văn nào?", a: ["Nguyễn Thi", "Anh Đức", "Nam Cao", "Tô Hoài"], correct: 0 }
+            ],
+            expert: [
+                { q: "Ai là người phụ nữ Việt Nam đầu tiên được phong hàm Nữ Thiếu tướng Quân đội Nhân dân Việt Nam?", a: ["Nguyễn Thị Định", "Nguyễn Thị Bình", "Hà Thị Quế", "Nguyễn Thị Chiên"], correct: 0 },
+                { q: "Triều đại phong kiến nào ở Việt Nam từng ban hành luật cho phép con gái thừa kế tài sản ngang hàng con trai?", a: ["Nhà Lý", "Nhà Trần", "Nhà Lê sơ (Luật Hồng Đức)", "Nhà Nguyễn"], correct: 2 },
+                { q: "Tranh Đông Hồ 'Bà Triệu cưỡi voi' mô tả nữ anh hùng Triệu Thị Trinh cưỡi voi mấy ngà?", a: ["1 ngà", "2 ngà", "3 ngà", "4 ngà"], correct: 2 },
+                { q: "Quốc gia nào là nơi đầu tiên trên thế giới cấp quyền bầu cử hoàn toàn bình đẳng cho phụ nữ vào năm 1893?", a: ["New Zealand", "Phần Lan", "Hoa Kỳ", "Vương quốc Anh"], correct: 0 },
+                { q: "Ai là nữ tiến sĩ đầu tiên trong lịch sử khoa bảng Việt Nam, người phải cải trang nam giới để đi thi thời nhà Mạc?", a: ["Nguyễn Thị Duệ", "Công chúa An Tư", "Sương Nguyệt Anh", "Lê Ngọc Hân"], correct: 0 },
+                { q: "Nữ hoàng duy nhất cai trị Đế quốc Nga và được mệnh danh là 'Đại đế' (The Great) trong lịch sử là ai?", a: ["Catherine II", "Elizabeth I", "Maria Theresa", "Victoria"], correct: 0 },
+                { q: "Người phụ nữ nào là Trưởng phái đoàn Chính phủ Cách mạng lâm thời CHMN Việt Nam ký Hiệp định Paris 1973?", a: ["Nguyễn Thị Bình", "Nguyễn Thị Định", "Nguyễn Thị Minh Khai", "Lê Thị Xuyến"], correct: 0 },
+                { q: "Nữ thi sĩ nào là tác giả thực sự của tập 'Cung oán ngâm khúc'?", a: ["Nguyễn Gia Thiều (Nam sĩ)", "Đoàn Thị Điểm", "Bà Huyện Thanh Quan", "Không phải các đáp án trên"], correct: 0 },
+                { q: "Đạo diễn nữ đầu tiên của Việt Nam vinh dự nhận giải 'Đạo diễn xuất sắc nhất' tại LHP Cannes là ai?", a: ["Phạm Nhuệ Giang", "Việt Linh", "Hồng Ánh", "Chưa có đạo diễn nữ VN đạt giải này"], correct: 3 },
+                { q: "Người phụ nữ đầu tiên trên thế giới đoạt giải Turing (giải Nobel Khoa học Máy tính) vào năm 2006 là ai?", a: ["Frances E. Allen", "Ada Lovelace", "Grace Hopper", "Barbara Liskov"], correct: 0 }
+            ],
+            millionaire: [
+                { q: "Ai là người phụ nữ duy nhất trong lịch sử Việt Nam từng hai lần được phong làm Hoàng hậu của hai vương triều?", a: ["Dương Vân Nga", "Lý Chiêu Hoàng", "Ngọc Hoan", "Lê Ngọc Hân"], correct: 0 },
+                { q: "'Bà mẹ của bom nguyên tử' là biệt danh giới khoa học đặt cho nhà vật lý nữ gốc Hoa nào trong Dự án Manhattan?", a: ["Ngô Kiện Hùng (Chien-Shiung Wu)", "Saku Tsuneka", "Tu Youyou", "Lí Minh Hoa"], correct: 0 },
+                { q: "Tập thơ chữ Hán 'Tự tình' của Hồ Xuân Hương gồm bao nhiêu bài thơ mang tên này?", a: ["1 bài", "2 bài", "3 bài", "4 bài"], correct: 2 },
+                { q: "Nữ chính trị gia Sirimavo Bandaranaike - nữ Thủ tướng đầu tiên trên thế giới vào năm 1960 - lãnh đạo quốc gia nào?", a: ["Sri Lanka", "Ấn Độ", "Pakistan", "Bangladesh"], correct: 0 },
+                { q: "Di chỉ khảo cổ học về người phụ nữ cổ xưa nhất Việt Nam (tìm thấy tại hang Thẩm Khuyên, Lạng Sơn) có niên đại bao nhiêu?", a: ["Khoảng 20.000 năm", "Khoảng 50.000 năm", "Khoảng 250.000 năm", "Khoảng 400.000 - 500.000 năm"], correct: 3 },
+                { q: "Ai là người phụ nữ đầu tiên leo lên đỉnh Everest (vào năm 1975)?", a: ["Junko Tabei", "Phanthog", "Wanda Rutkiewicz", "Alison Hargreaves"], correct: 0 },
+                { q: "Người phụ nữ nào là biểu tượng trên tờ tiền giấy mệnh giá 50.000 Won đang lưu hành tại Hàn Quốc?", a: ["Hoàng hậu Myeongseong", "Thân Sư Nhâm Đường (Shin Saimdang)", "Nữ vương Seondeok", "Heo Nanseolheon"], correct: 1 },
+                { q: "Bức chân dung 'Mona Lisa' của Leonardo da Vinci được xác định vẽ người phụ nữ có thật tên là gì?", a: ["Lisa Gherardini", "Caterina Sforza", "Isabella d'Este", "Cecilia Gallerani"], correct: 0 },
+                { q: "Trong lịch sử phong trào phụ nữ Việt Nam, tờ báo độc lập đầu tiên 'Nữ Giới Chung' ra đời 1918 tại Sài Gòn do ai đứng tên chủ nhiệm hợp pháp?", a: ["Sương Nguyệt Anh", "Trần Chánh Chiếu", "Henri Blaquière", "Nguyễn Đức Nhuận"], correct: 2 },
+                { q: "Huân chương cao quý nhất mà Nhà nước Việt Nam dành riêng để tặng hoặc truy tặng cho những người mẹ có nhiều cống hiến, hy sinh?", a: ["Huân chương Độc lập", "Huân chương Hồ Chí Minh", "Danh hiệu 'Bà mẹ Việt Nam anh hùng'", "Huân chương Sao Vàng"], correct: 2 },
+                { q: "Trận đánh lịch sử nào chứng kiến sự hy sinh anh dũng của nữ anh hùng Nguyễn Thị Út (Út Tịch) cùng người con gái thứ ba vào năm 1968?", a: ["Trận Trà Ôn", "Trận Tam Ngãi", "Trận Cầu Kè", "Trận Kinh Bùi"], correct: 1 },
+                { q: "Theo \"Đại Việt sử ký toàn thư\", vị hoàng hậu nào trong lịch sử nước ta là người duy nhất được phong tặng danh hiệu cao quý \"Phụ đạo Đại vương\" sau khi qua đời?", a: ["Linh Nhân Hoàng hậu (Nguyên phi Ỷ Lan)", "Thượng Dương Hoàng hậu", "Chiêu Thánh Hoàng hậu (Lý Chiêu Hoàng)", "Bảo Từ Hoàng hậu"], correct: 0 },
+                { q: "Người phụ nữ đầu tiên trên thế giới đoạt giải Fields (giải Nobel Toán học) vào năm 2014 là nhà toán học người nước nào?", a: ["Iran", "Pháp", "Đức", "Hoa Kỳ"], correct: 0 },
+                { q: "Tập thơ chữ Nôm \"Cung oán ngâm khúc\" của Nguyễn Gia Thiều sử dụng thể thơ nào làm ngôn ngữ diễn đạt chính?", a: ["Song thất lục bát", "Lục bát", "Thất ngôn bát cú Đường luật", "Thất ngôn trường thiên"], correct: 0 },
+                { q: "Trong phong trào Tây Sơn, nữ tướng Bùi Thị Xuân nổi tiếng với việc huấn luyện và chỉ huy đội quân độc đáo nào ra trận?", a: ["Đội tượng binh (voi chiến)", "Đội thiết kỵ binh", "Đội nữ binh chủng pháo thủ", "Đội thủy binh cảm tử"], correct: 0 },
+                { q: "Ai là người phụ nữ đầu tiên nắm giữ vị trí Tổng Giám đốc Tổ chức Thương mại Thế giới (WTO)?", a: ["Ngozi Okonjo-Iweala", "Christine Lagarde", "Kristalina Georgieva", "Ursula von der Leyen"], correct: 0 },
+                { q: "Trong tác phẩm cổ điển \"Truyện Kiều\", Nguyễn Du đã miêu tả tổng cộng bao nhiêu năm trôi dạt, phong trần của Thúy Kiều trước khi được đoàn tụ gia đình?", a: ["10 năm", "12 năm", "15 năm", "18 năm"], correct: 2 },
+                { q: "Vị nữ vương duy nhất cai trị vương triều cổ đại Palmyra (thuộc Syria ngày nay), người từng cả gan thách thức Đế quốc La Mã là ai?", a: ["Nữ vương Zenobia", "Nữ hoàng Cleopatra", "Nữ vương Boudica", "Nữ hoàng Nefertiti"], correct: 0 },
+                { q: "Người phụ nữ Việt Nam đầu tiên vinh dự được UNESCO vinh danh là \"Danh nhân văn hóa thế giới\" là ai?", a: ["Nữ sĩ Hồ Xuân Hương", "Sương Nguyệt Anh", "Bà Huyện Thanh Quan", "Chưa có nhân vật nữ Việt Nam nào được vinh danh"], correct: 3 },
+                { q: "Nguyên mẫu nhân vật \"Mẹ Suốt\" kiên cường chèo đò chở bộ đội qua sông dưới mưa bom bão đạn nằm ở con sông nào thuộc tỉnh Quảng Bình?", a: ["Sông Nhật Lệ", "Sông Gianh", "Sông Kiến Giang", "Sông Long Đại"], correct: 0 },
+                { q: "Bức thư tuyệt mệnh nổi tiếng của nữ bác sĩ, liệt sĩ Đặng Thùy Trâm được viết vào ngày tháng năm nào, trước khi bà hy sinh một ngày?", a: ["21/06/1970", "22/06/1970", "30/04/1975", "20/12/1969"], correct: 0 },
+                { q: "Hành tinh duy nhất trong Hệ Mặt Trời được đặt tên theo một vị nữ thần trong thần thoại La Mã là hành tinh nào?", a: ["Sao Kim (Venus)", "Sao Hỏa (Mars)", "Sao Mộc (Jupiter)", "Sao Thủy (Mercury)"], correct: 0 },
+                { q: "Ai là người phụ nữ ĐẦU TIÊN từng đảm nhiệm chức vụ Thủ tướng nước Cộng hòa Pháp?", a: ["Édith Cresson", "Élisabeth Borne", "Ségolène Royal", "Marine Le Pen"], correct: 0 },
+                { q: "Thần thoại của dân tộc nào tại Việt Nam có sử thi nói về nàng Út Lót và anh Gia Liêu, ca ngợi tình yêu thủy chung?", a: ["Người Mường", "Người Thái", "Người Khơ-me", "Người Ba-na"], correct: 0 },
+                { q: "Nhà văn nữ đầu tiên trên thế giới đoạt giải Nobel Văn học (vào năm 1909) là Selma Lagerlöf. Bà là người quốc gia nào?", a: ["Thụy Điển", "Na Uy", "Đan Mạch", "Phần Lan"], correct: 0 },
+                { q: "\"Lục súc tranh công\" là một truyện thơ ngụ ngôn khuyết danh tài hoa của Việt Nam. Cuộc tranh công này nổ ra giữa bao nhiêu con vật trong nhà?", a: ["6 con vật", "4 con vật", "5 con vật", "3 con vật"], correct: 0 },
+                { q: "Trong lịch sử phong kiến Trung Quốc, vị Hoàng thái hậu nào đã buông rèm nhiếp chính qua suốt triều đại của 3 đời vua: Đồng Trị, Quang Tự và Phổ Nghi?", a: ["Từ Hi Thái hậu", "Võ Tắc Thiên", "Lữ Hậu", "Hiếu Trang Hoàng thái hậu"], correct: 0 },
+                { q: "Hệ thống mật mã vô tuyến nhảy tần – nền tảng cốt lõi của công nghệ Wi-Fi, Bluetooth ngày nay – do nữ minh tinh Hollywood nào đồng sáng chế?", a: ["Hedy Lamarr", "Marilyn Monroe", "Audrey Hepburn", "Katharine Hepburn"], correct: 0 },
+                { q: "Nữ anh hùng nào của Việt Nam đã bị giặc hãm hại và hy sinh tại Côn Đảo khi mới 19 tuổi?", a: ["Võ Thị Sáu", "Mạc Thị Bưởi", "Nguyễn Thị Chiên", "Kơ Pa Kơ Lơng"], correct: 0 },
+                { q: "Nhà toán học nữ đầu tiên được ghi nhận trong lịch sử nhân loại, người đã bị sát hại tại thành phố Alexandria vào thế kỷ thứ V là ai?", a: ["Hypatia", "Ada Lovelace", "Émilie du Châtelet", "Sophie Germain"], correct: 0 },
+                { q: "Việt Nam có các di sản tư liệu thế giới nào của UNESCO liên quan trực tiếp đến thơ văn chữ Nôm của các nữ sĩ?", a: ["Chưa có tập thơ cá nhân riêng biệt nào của nữ sĩ được công nhận là Di sản tư liệu toàn cầu/khu vực độc lập", "Tập thơ Hồ Xuân Hương", "Truyện Kiều", "Đoàn Thị Điểm tác phẩm"], correct: 0 },
+                { q: "Ai là người phụ nữ đầu tiên trên thế giới giành được giải thưởng Pritzker – \"Nobel của ngành Kiến trúc\" vào năm 2004?", a: ["Zaha Hadid", "Kazuyo Sejima", "Carme Pigem", "Jeanne Gang"], correct: 0 },
+                { q: "Triều đại nào ở Việt Nam đã lần đầu tiên chính thức tổ chức một cuộc thi tuyển chọn \"Nữ quan\" (các quan bà trong cung) thông qua thi cử chữ nghĩa?", a: ["Nhà Lê sơ", "Nhà Lý", "Nhà Trần", "Nhà Nguyễn"], correct: 0 },
+                { q: "Ai là nữ nguyên thủ quốc gia đầu tiên của châu Phi được bầu cử dân chủ (Tổng thống Liberia từ 2006 đến 2018) và từng đạt giải Nobel Hòa bình?", a: ["Ellen Johnson Sirleaf", "Sahle-Work Zewde", "Samia Suluhu Hassan", "Joyce Banda"], correct: 0 },
+                { q: "Nữ anh hùng Lê Chân (nữ tướng của Hai Bà Trưng) đã chọn vùng đất nào làm căn cứ chiêu mộ binh sĩ, nay là trung tâm thành phố nào?", a: ["Hải Phòng", "Quảng Ninh", "Nam Định", "Thanh Hóa"], correct: 0 },
+                { q: "Nhà sinh học phân tử nữ người Anh nào là người trực tiếp chụp được bức ảnh \"Photo 51\" bằng tia X – bằng chứng giúp khám phá cấu trúc DNA?", a: ["Rosalind Franklin", "Barbara McClintock", "Gerty Cori", "Dorothy Hodgkin"], correct: 0 },
+                { q: "Vị nữ thần nào trong văn hóa tâm linh của người dân Nam Bộ được coi là hiện thân của nữ thần Pô Inư Nagar trong sự giao thoa Việt - Chăm?", a: ["Linh Sơn Thánh Mẫu (Bà Đen)", "Bà Chúa Xứ Núi Sam", "Bà Ngũ Hành", "Mẫu Thượng Ngàn"], correct: 0 },
+                { q: "Ai là nữ nhà văn đầu tiên của thế giới viết nên cuốn tiểu thuyết được công nhận rộng rãi là đầu tiên trong lịch sử nhân loại – \"Truyện kể Genji\"?", a: ["Murasaki Shikibu", "Sei Shonagon", "Ono no Komachi", "Higuchi Ichiyo"], correct: 0 },
+                { q: "Nhân vật nữ biểu tượng lịch sử nào của Việt Nam gắn liền với bức ảnh nổi tiếng \"Em bé Napalm\"?", a: ["Kim Phúc", "Không có phương án nào đúng trong danh sách này", "Đặng Thùy Trâm", "Võ Thị Sáu"], correct: 1 },
+                { q: "Trong \"Truyện Kiều\", nhân vật Hoạn Thư là con gái của một vị quan giữ chức vụ gì trong triều đình?", a: ["Thượng thư", "Tri phủ", "Tể tướng", "Thái sư"], correct: 0 },
+                { q: "Người phụ nữ đầu tiên giữ chức vụ Thủ tướng của một quốc gia Hồi giáo trong lịch sử hiện đại là ai?", a: ["Benazir Bhutto", "Khaleda Zia", "Sheikh Hasina", "Tansu Çiller"], correct: 0 },
+                { q: "Bộ luật Hồng Đức (Quốc triều hình luật) quy định chồng lơ là vợ không đi lại trong bao lâu thì người vợ có quyền ly dị?", a: ["5 tháng", "1 năm", "3 năm", "5 năm"], correct: 0 },
+                { q: "Vị hoàng hậu nào của triều đại nhà Nguyễn đã phá vỡ thông lệ để được phong hậu ngay trong ngày cưới vua Bảo Đại?", a: ["Nam Phương Hoàng hậu", "Thừa Thiên Cao Hoàng hậu", "Thuận Thiên Cao Hoàng hậu", "Từ Dụ Hoàng thái hậu"], correct: 0 },
+                { q: "Tác phẩm điêu khắc cổ đại \"Vệ nữ thành Milo\" (Venus de Milo) hiện đang được lưu giữ tại bảo tàng quốc gia nào?", a: ["Bảo tàng Louvre (Pháp)", "Bảo tàng Anh (British Museum)", "Bảo tàng Vatican (Ý)", "Bảo tàng Quốc gia Hy Lạp"], correct: 0 },
+                { q: "Người phụ nữ duy nhất trong lịch sử từng được bổ nhiệm làm Chánh án Tòa án Tối cao của Vương quốc Anh là ai?", a: ["Brenda Hale", "Elisabeth Laing", "Sue Carr", "Rose Heilbron"], correct: 0 },
+                { q: "Ai là tác giả nữ đầu tiên đoạt giải Pulitzer cho tác phẩm hư cấu vào năm 1921 với cuốn tiểu thuyết \"Thời thơ ngây\"?", a: ["Edith Wharton", "Willa Cather", "Edna Ferber", "Pearl S. Buck"], correct: 0 },
+                { q: "Trong thần thoại Ai Cập, vị nữ thần nào là bảo hộ của bà mẹ, trẻ em, phép thuật và là vợ của thần chết Osiris?", a: ["Isis", "Nephthys", "Bastet", "Sekhmet"], correct: 0 },
+                { q: "Nữ phi hành gia nào giữ kỷ lục là người phụ nữ có tổng thời gian sinh sống và làm việc liên tục ngoài không gian dài nhất trong một chuyến bay (328 ngày)?", a: ["Christina Koch", "Peggy Whitson", "Jessica Meir", "Sunita Williams"], correct: 0 },
+                { q: "Nhà văn nữ xuất sắc nào là người đầu tiên dịch trọn vẹn tác phẩm kinh điển \"Thần khúc\" của Dante sang tiếng Anh hiện đại?", a: ["Dorothy L. Sayers", "Virginia Woolf", "George Eliot", "Mary Shelley"], correct: 0 },
+                { q: "Trong lịch sử phong kiến Trung Quốc, vị nữ hoàng duy nhất lập ra triều đại của riêng mình (triều Võ Chu) đã tự tạo ra chữ gì để đặt tên cho mình?", a: ["Chiếu (曌)", "Hậu (后)", "Thiên (天)", "Minh (明)"], correct: 0 },
+                { q: "Bức tranh sơn dầu 'Mẹ con' (Mother and Child) nổi tiếng của họa sĩ Lê Phổ được sáng tác vào thập niên nào?", a: ["Thập niên 1930", "Thập niên 1940", "Thập niên 1950", "Thập niên 1920"], correct: 0 },
+                { q: "Người phụ nữ duy nhất xuất hiện trên lá cờ huy hiệu của một quốc gia độc lập hiện nay là ai?", a: ["Nữ hoàng Elizabeth II", "Thánh Jeanne d'Arc", "Nữ vương Victoria", "Không có quốc gia nào"], correct: 3 }
+            ]
+        };
+
+        let questions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let timerInterval = null;
+    let timeLeft = 0;
+
+    // Trạng thái giới hạn các quyền trợ giúp trong 1 lượt chơi
+    let usedFifty = false;
+    let usedCall = false;
+    let usedAudience = false;
+    let changeQuestionCount = 3; // Tối đa 3 lần đổi câu hỏi
+
+    function shuffleArray(array) {
+        let arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    // Quản lý lịch sử câu hỏi xuất hiện trong 4 lượt gần nhất
+    function getRecentQuestionsHistory() {
+        let history = localStorage.getItem('recent_questions_history');
+        return history ? JSON.parse(history) : []; // Lưu mảng chứa 4 mảng ID câu hỏi của 4 lượt chơi
+    }
+
+    function saveRecentQuestionsHistory(currentQuestionIds) {
+        let history = getRecentQuestionsHistory();
+        history.push(currentQuestionIds);
+        // Chỉ giữ lại tối đa 4 lượt chơi gần nhất
+        if (history.length > 4) {
+            history.shift();
+        }
+        localStorage.setItem('recent_questions_history', JSON.stringify(history));
+    }
+
+    function initGame() {
+        clearInterval(timerInterval);
+
+        // Reset trạng thái trợ giúp cho lượt chơi mới
+        usedFifty = false;
+        usedCall = false;
+        usedAudience = false;
+        changeQuestionCount = 3;
+
+        let easyList = questionBank.easy.map(q => ({ ...q, level: 'easy' }));
+        let mediumList = questionBank.medium.map(q => ({ ...q, level: 'medium' }));
+        let hardList = questionBank.hard.map(q => ({ ...q, level: 'hard' }));
+        let expertList = questionBank.expert.map(q => ({ ...q, level: 'expert' }));
+        let millionaireList = questionBank.millionaire.map(q => ({ ...q, level: 'millionaire' }));
+
+        let allQuestions = [
+            ...easyList,
+            ...mediumList,
+            ...hardList,
+            ...expertList,
+            ...millionaireList
+        ];
+
+        // Lấy danh sách ID các câu hỏi đã xuất hiện trong 4 lượt chơi trước
+        let history = getRecentQuestionsHistory();
+        let excludeIds = new Set(history.flat());
+
+        // Lọc bỏ các câu hỏi đã xuất hiện trong 4 lượt gần nhất
+        let availableQuestions = allQuestions.filter(q => !excludeIds.has(q.q));
+
+        // Nếu kho câu hỏi khả dụng còn ít hơn 15 câu (do kho tổng hết câu mới), reset lại lịch sử
+        if (availableQuestions.length < 15) {
+            availableQuestions = allQuestions;
+            localStorage.removeItem('recent_questions_history');
+        }
+
+        // Xáo trộn và lấy 15 câu hỏi ngẫu nhiên
+        let shuffledAll = shuffleArray(availableQuestions);
+        let selected15Questions = shuffledAll.slice(0, 15);
+
+        // Lưu 15 câu hỏi của lượt chơi này vào lịch sử
+        let currentRoundIds = selected15Questions.map(q => q.q);
+        saveRecentQuestionsHistory(currentRoundIds);
+
+        questions = selected15Questions.map(item => {
+            let optionsWithIndex = item.a.map((opt, idx) => ({ text: opt, isCorrect: idx === item.correct }));
+            let shuffledOptions = shuffleArray(optionsWithIndex);
+            let newCorrectIndex = shuffledOptions.findIndex(opt => opt.isCorrect);
+            return {
+                q: item.q,
+                options: shuffledOptions.map(opt => opt.text),
+                correct: newCorrectIndex,
+                level: item.level
+            };
+        });
+
+        currentIndex = 0;
+        score = 0;
+        renderQuestion();
+    }
+
+    function startTimer(duration) {
+        clearInterval(timerInterval);
+        timeLeft = duration;
+        updateTimerDisplay();
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                endGame(false, "Hết thời gian suy nghĩ!");
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const timerEl = document.getElementById('timer-display');
+        if (timerEl) {
+            timerEl.innerText = `⏱️ ${timeLeft}s`;
+            timerEl.style.color = (timeLeft <= 5) ? '#ff4d4d' : '#ffd700';
+        }
+    }
+
+    function renderQuestion() {
+        const app = document.getElementById('game-app');
+        
+        if (currentIndex >= questions.length) {
+            endGame(true, "Bạn đã xuất sắc vượt qua toàn bộ 15 câu hỏi!");
+            return;
+        }
+
+        let currentQ = questions[currentIndex];
+        let timeLimit = (currentQ.level === 'easy') ? 30 : 60;
+
+        app.innerHTML = `
+            <div class="header">
+                <span>🌸 Ai Là Triệu Phú 20/10</span>
+                <span id="timer-display" style="font-weight: bold; font-size: 1.2rem;">⏱️ ${timeLimit}s</span>
+                <span>Câu ${currentIndex + 1}/${questions.length}</span>
+            </div>
+            <div class="lifelines">
+                <button class="lifeline-btn" id="btn-5050" onclick="useFiftyFifty()" ${usedFifty ? 'disabled' : ''}>50:50</button>
+                <button class="lifeline-btn" id="btn-call" onclick="useCallFriend()" ${usedCall ? 'disabled' : ''}>📞 Gọi điện</button>
+                <button class="lifeline-btn" id="btn-audience" onclick="useAudience()" ${usedAudience ? 'disabled' : ''}>👥 Khán giả</button>
+                <button class="lifeline-btn" id="btn-change" onclick="useChangeQuestion()" ${changeQuestionCount <= 0 ? 'disabled' : ''}>🔄 Đổi câu (${changeQuestionCount})</button>
+            </div>
+            <div class="sub-text">Thời gian suy nghĩ: ${timeLimit} giây</div>
+            <div class="question-box" id="q-text">${currentQ.q}</div>
+            <div class="answers-grid" id="answers-container">
+                <button class="answer-btn" onclick="checkAnswer(0)" id="ans-0">A. ${currentQ.options[0]}</button>
+                <button class="answer-btn" onclick="checkAnswer(1)" id="ans-1">B. ${currentQ.options[1]}</button>
+                <button class="answer-btn" onclick="checkAnswer(2)" id="ans-2">C. ${currentQ.options[2]}</button>
+                <button class="answer-btn" onclick="checkAnswer(3)" id="ans-3">D. ${currentQ.options[3]}</button>
+            </div>
+            <div class="footer-nav">
+                <a href="index.html" class="back-link">← Quay lại Trang Chủ</a>
+            </div>
+        `;
+
+        startTimer(timeLimit);
+    }
+
+    function checkAnswer(selectedIndex) {
+        clearInterval(timerInterval);
+
+        let currentQ = questions[currentIndex];
+        let correctIndex = currentQ.correct;
+
+        for (let i = 0; i < 4; i++) {
+            let btn = document.getElementById(`ans-${i}`);
+            if(btn) btn.disabled = true;
+        }
+
+        let selectedBtn = document.getElementById(`ans-${selectedIndex}`);
+        let correctBtn = document.getElementById(`ans-${correctIndex}`);
+
+        if (selectedIndex === correctIndex) {
+            selectedBtn.classList.add('correct');
+            score++;
+            setTimeout(() => {
+                currentIndex++;
+                renderQuestion();
+            }, 1500);
+        } else {
+            selectedBtn.classList.add('wrong');
+            correctBtn.classList.add('correct');
+            setTimeout(() => {
+                endGame(false, "Rất tiếc! Bạn đã chọn sai đáp án.");
+            }, 1500);
+        }
+    }
+
+    function endGame(isWin, message) {
+        clearInterval(timerInterval);
+        const app = document.getElementById('game-app');
+
+        app.innerHTML = `
+            <div class="result-screen">
+                <h2>${isWin ? "🏆 CHIẾN THẮNG TUYỆT ĐỐI!" : "💥 TRÒ CHƠI KẾT THÚC!"}</h2>
+                <p style="color: #ff99bb; font-size: 1.2rem; margin-bottom: 10px;">${message}</p>
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; margin: 20px 0;">
+                    <p style="font-size: 1.4rem; font-weight: bold; color: #ffd700;">TỔNG ĐIỂM: ${score} / 15 CÂU</p>
+                </div>
+                <p>Chúc một nửa thế giới luôn luôn hạnh phúc và rạng rỡ! 🌸✨</p>
+                <button class="primary-btn" onclick="initGame()" style="margin-top: 15px;">Chơi lượt mới</button>
+                <div style="margin-top: 15px;">
+                    <a href="index.html" class="back-link">🏠 Quay lại Trang Chủ</a>
+                </div>
+            </div>
+        `;
+    }
+
+    // 1. Trợ giúp 50:50 (1 lần/lượt chơi)
+    function useFiftyFifty() {
+        if (usedFifty) return;
+        usedFifty = true;
+        document.getElementById('btn-5050').disabled = true;
+
+        let currentQ = questions[currentIndex];
+        let correctIndex = currentQ.correct;
+        let wrongIndices = [];
+        for (let i = 0; i < 4; i++) {
+            if (i !== correctIndex) wrongIndices.push(i);
+        }
+
+        shuffleArray(wrongIndices).slice(0, 2).forEach(idx => {
+            let btn = document.getElementById(`ans-${idx}`);
+            if (btn) {
+                btn.innerHTML = "";
+                btn.style.visibility = "hidden";
+                btn.disabled = true;
+            }
+        });
+    }
+
+    // 2. Gọi điện thoại cho người thân (1 lần/lượt chơi - 90% chính xác)
+    function useCallFriend() {
+        if (usedCall) return;
+        usedCall = true;
+        document.getElementById('btn-call').disabled = true;
+
+        let currentQ = questions[currentIndex];
+        let letters = ['A', 'B', 'C', 'D'];
+        let suggestedIndex = currentQ.correct;
+
+        if (Math.random() > 0.9) {
+            let wrongIndices = [0, 1, 2, 3].filter(i => i !== currentQ.correct);
+            suggestedIndex = wrongIndices[Math.floor(Math.random() * wrongIndices.length)];
+        }
+
+        alert(`📞 Người thân gợi ý: "Theo mình đáp án chính xác là ${letters[suggestedIndex]}!"`);
+    }
+
+    // 3. Hỏi ý kiến khán giả (1 lần/lượt chơi - 80% chọn đáp án đúng)
+    function useAudience() {
+        if (usedAudience) return;
+        usedAudience = true;
+        document.getElementById('btn-audience').disabled = true;
+
+        let currentQ = questions[currentIndex];
+        let letters = ['A', 'B', 'C', 'D'];
+        let percentages = [0, 0, 0, 0];
+
+        if (Math.random() <= 0.8) {
+            percentages[currentQ.correct] = Math.floor(Math.random() * 21) + 60;
+            let remaining = 100 - percentages[currentQ.correct];
+            let otherIndices = [0, 1, 2, 3].filter(i => i !== currentQ.correct);
+            
+            let p1 = Math.floor(Math.random() * remaining);
+            let p2 = Math.floor(Math.random() * (remaining - p1));
+            let p3 = remaining - p1 - p2;
+
+            percentages[otherIndices[0]] = p1;
+            percentages[otherIndices[1]] = p2;
+            percentages[otherIndices[2]] = p3;
+        } else {
+            let wrongIndex = Math.floor(Math.random() * 4);
+            percentages[wrongIndex] = 55;
+            let remaining = 45;
+            let otherIndices = [0, 1, 2, 3].filter(i => i !== wrongIndex);
+            percentages[otherIndices[0]] = 20;
+            percentages[otherIndices[1]] = 15;
+            percentages[otherIndices[2]] = 10;
+        }
+
+        alert(`👥 Ý kiến khán giả trong trường quay:\n- A: ${percentages[0]}%\n- B: ${percentages[1]}%\n- C: ${percentages[2]}%\n- D: ${percentages[3]}%`);
+    }
+
+    // 4. Đổi câu hỏi (Tối đa 3 lần/lượt chơi)
+    function useChangeQuestion() {
+        if (changeQuestionCount <= 0) return;
+
+        changeQuestionCount--;
+        clearInterval(timerInterval);
+
+        let currentQ = questions.splice(currentIndex, 1)[0];
+        questions.push(currentQ);
+        renderQuestion();
+    }
+
+    initGame();
+</script>a
+</body>
+</html>na, sans-serif;
         }
         body {
             background-color: #0d0614;
