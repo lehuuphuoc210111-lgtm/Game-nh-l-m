@@ -14,6 +14,7 @@
 
         body {
             margin: 0;
+            padding: 10px;
             background: #020617;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
@@ -21,39 +22,24 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            min-height: 100dvh; /* Hỗ trợ Viewport động trên điện thoại */
             overflow: hidden;
             color: white;
             transition: background 2s ease;
         }
 
-        @media screen and (max-width: 900px) and (orientation: portrait) {
-            #rotateMessage { display: flex !important; }
-        }
-
-        #rotateMessage {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #020617;
-            z-index: 9999;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-        }
-
         #uiContainer {
-            width: 95vw;
-            max-width: 800px;
+            width: 100%;
+            max-width: 900px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
+            padding: 0 5px;
         }
 
         #scoreBoard, #phaseBoard {
-            font-size: 16px;
+            font-size: clamp(13px, 3.5vw, 18px);
             font-weight: bold;
             text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
         }
@@ -61,15 +47,16 @@
 
         #gameCanvas {
             position: relative;
-            width: 95vw;
-            max-width: 800px;
-            height: 320px;
+            width: 100%;
+            max-width: 900px;
+            /* Tự động chỉnh chiều cao phù hợp cho cả màn hình dọc và ngang */
+            height: clamp(280px, 50vh, 500px);
             background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
             border: 3px solid #38bdf8;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 0 30px rgba(56, 189, 248, 0.2);
-            transition: all 2s ease;
+            transition: background 2s ease, border-color 2s ease;
         }
 
         #player {
@@ -91,14 +78,12 @@
         .glow-effect { filter: drop-shadow(-6px 0px 5px #ef4444) drop-shadow(0px 0px 8px #f97316); }
         .sun-glow { filter: drop-shadow(0px 0px 20px #ef4444) drop-shadow(0px 0px 40px #f59e0b); }
         
-        /* Hiệu ứng mờ ảo cho hố đen */
         .blackhole-glow {
             filter: drop-shadow(0px 0px 25px #a855f7) drop-shadow(0px 0px 50px #6366f1);
             animation: spin 6s linear infinite;
         }
         @keyframes spin { 100% { transform: rotate(-360deg); } }
 
-        /* Cột lửa xuất hiện từ từ */
         .solar-flare-beam {
             position: absolute;
             left: 0;
@@ -118,9 +103,10 @@
             align-items: center;
             justify-content: center;
             z-index: 20;
+            text-align: center;
+            padding: 15px;
         }
 
-        /* Thông báo vượt qua hệ mặt trời */
         #victoryAnnouncement {
             display: none;
             position: absolute;
@@ -129,27 +115,29 @@
             z-index: 30;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: clamp(20px, 5vw, 32px);
             font-weight: bold;
             color: #facc15;
             text-shadow: 0 0 20px #e11d48;
             animation: pulseText 1.5s ease-in-out infinite alternate;
+            text-align: center;
         }
         @keyframes pulseText { 0% { transform: scale(0.95); } 100% { transform: scale(1.05); } }
 
         #controlsArea {
-            width: 95vw;
-            max-width: 800px;
+            width: 100%;
+            max-width: 900px;
             display: flex;
             justify-content: center;
-            margin-top: 5px;
+            align-items: center;
+            margin-top: 10px;
         }
 
         #joystickContainer {
-            width: 85px;
-            height: 85px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px dashed rgba(56, 189, 248, 0.3);
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(56, 189, 248, 0.4);
             border-radius: 50%;
             position: relative;
             display: flex;
@@ -158,8 +146,8 @@
         }
 
         #joystickKnob {
-            width: 35px;
-            height: 35px;
+            width: 36px;
+            height: 36px;
             background: linear-gradient(135deg, #38bdf8, #0284c7);
             border-radius: 50%;
             position: absolute;
@@ -167,8 +155,8 @@
         }
 
         button {
-            background: #10b981; border: none; padding: 10px 24px;
-            color: white; font-size: 15px; font-weight: bold;
+            background: #10b981; border: none; padding: 12px 28px;
+            color: white; font-size: 16px; font-weight: bold;
             border-radius: 8px; cursor: pointer; margin-top: 10px;
             box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
         }
@@ -176,15 +164,6 @@
     </style>
 </head>
 <body>
-
-    <div id="rotateMessage">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
-            <path d="M12 21A9 9 0 0 0 21 12H19A7 7 0 0 1 12 19V21Z"/>
-            <path d="M21 12A9 9 0 0 0 12 3V5A7 7 0 0 1 19 12H21Z"/>
-            <rect x="2" y="7" width="12" height="18" rx="2" transform="rotate(-90 2 7)" fill="none" stroke="#fff" stroke-width="2"/>
-        </svg>
-        <p style="font-size: 18px; font-weight: bold; margin-top: 15px;">Vui lòng xoay ngang màn hình thiết bị để chơi game!</p>
-    </div>
 
     <div id="uiContainer">
         <div id="scoreBoard">Điểm: <span id="score">0</span> / 100</div>
@@ -209,8 +188,8 @@
         <div id="victoryAnnouncement">VƯỢT QUA HỆ MẶT TRỜI</div>
         
         <div id="gameOverScreen">
-            <h1 id="winLoseTitle" style="color: #f43f5e; margin: 0; text-shadow: 0 0 15px rgba(244,63,94,0.4);">TÀU VŨ TRỤ BỊ PHÁ HỦY!</h1>
-            <p style="font-size: 18px; margin: 10px 0;">Điểm số cuối cùng: <span id="finalScore">0</span></p>
+            <h1 id="winLoseTitle" style="color: #f43f5e; margin: 0; text-shadow: 0 0 15px rgba(244,63,94,0.4); font-size: clamp(20px, 4vw, 28px);">TÀU VŨ TRỤ BỊ PHÁ HỦY!</h1>
+            <p style="font-size: 16px; margin: 10px 0;">Điểm số cuối cùng: <span id="finalScore">0</span></p>
             <button onclick="startGame()">Tái sinh tàu</button>
         </div>
     </div>
@@ -243,7 +222,7 @@
 
         let score = 0;
         let isGameOver = false;
-        let isTransitioning = false; // Trạng thái đang chuyển cảnh hố đen
+        let isTransitioning = false;
         let gameInterval, spawnInterval, sunAttackInterval;
         let obstacles = [];
         let sunObject = null;
@@ -264,7 +243,7 @@
             blackhole: `<svg viewBox="0 0 100 100" width="100%" height="100%"><defs><radialGradient id="bhGlow"><stop offset="10%" stop-color="#000"/><stop offset="60%" stop-color="#4c1d95"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><circle cx="50" cy="50" r="50" fill="url(#bhGlow)"/><circle cx="50" cy="50" r="18" fill="#000"/><path d="M50 20 Q65 20 70 50 T50 80 T30 50 Z" fill="none" stroke="#c084fc" stroke-width="2" opacity="0.6"/></svg>`
         };
 
-        // --- ĐIỀU KHIỂN JOYSTICK & KEYBOARD ---
+        // --- XỬ LÝ ĐIỀU KHIỂN JOYSTICK & PHÍM BẤM ---
         let joystickActive = false;
         let startX = 0, startY = 0;
         const maxRadius = 30;
@@ -340,20 +319,20 @@
         function updatePhaseUI() {
             if (isTransitioning) return;
             if (score <= 25) {
-                phaseText.innerText = "Tầng Nhiệt (Vệ tinh & Trạm vũ trụ)";
+                phaseText.innerText = "Tầng Nhiệt";
                 phaseText.style.color = "#38bdf8";
             } else if (score > 25 && score <= 50) {
-                phaseText.innerText = "Vành Đai Tiểu Hành Tinh (Thiên thạch lửa)";
+                phaseText.innerText = "Tiểu Hành Tinh";
                 phaseText.style.color = "#ea580c";
             } else if (score > 50 && score <= 75) {
-                phaseText.innerText = "Vành Đai Hành Tinh (Hành tinh lớn)";
+                phaseText.innerText = "Vành Đai Hành Tinh";
                 phaseText.style.color = "#a855f7";
             } else if (score > 75 && score < 100) {
-                phaseText.innerText = "Vành Đai Mặt Trời (BOSS CHIẾN)";
+                phaseText.innerText = "BOSS MẶT TRỜI";
                 phaseText.style.color = "#f43f5e";
                 if (!sunObject) spawnSunBoss(); 
             } else if (score >= 100) {
-                startBlackHoleTransition(); // Đạt 100 điểm kích hoạt sự kiện cốt truyện
+                startBlackHoleTransition();
             }
         }
 
@@ -361,8 +340,8 @@
             const sunDiv = document.createElement('div');
             sunDiv.classList.add('obstacle', 'sun-glow');
             sunDiv.innerHTML = VISUAL_ASSETS.sun;
-            const size = 180;
-            const posX = canvasWidth - 110;
+            const size = Math.min(canvasHeight * 0.6, 180);
+            const posX = canvasWidth - size - 10;
             const posY = (canvasHeight - size) / 2;
             sunDiv.style.width = size + 'px';
             sunDiv.style.height = size + 'px';
@@ -373,13 +352,11 @@
             sunAttackInterval = setInterval(triggerSunAttack, 1600);
         }
 
-        // --- TẤN CÔNG: VÒNG LỬA & CỘT LỬA XUẤT HIỆN TỪ TỪ ---
         function triggerSunAttack() {
             if (isGameOver || score >= 100 || !sunObject) return;
             const attackType = Math.random() > 0.5 ? 'RING' : 'FLARE';
 
             if (attackType === 'RING') {
-                // VÒNG LỬA: Xuất hiện từ từ cạnh Mặt Trời rồi lao đi
                 const ring = document.createElement('div');
                 ring.classList.add('obstacle', 'glow-effect');
                 ring.innerHTML = VISUAL_ASSETS.fireball;
@@ -403,7 +380,6 @@
                     });
                 }, 400);
             } else {
-                // CỘT LỬA XUẤT HIỆN TỪ TỪ CÓ DẤU HIỆU NÉ CHÍNH XÁC
                 const beam = document.createElement('div');
                 beam.classList.add('solar-flare-beam');
                 const beamHeight = 40;
@@ -412,12 +388,10 @@
                 beam.style.height = beamHeight + 'px';
                 canvas.appendChild(beam);
 
-                // Bước 1: Hiện vạch mờ báo hiệu (Dấu hiệu né)
                 setTimeout(() => {
                     if (isGameOver || score >= 100) { beam.remove(); return; }
                     beam.style.opacity = '0.25';
                     
-                    // Bước 2: Rực sáng dần lên (Xuất hiện từ từ)
                     setTimeout(() => {
                         if (isGameOver || score >= 100) { beam.remove(); return; }
                         beam.style.opacity = '1';
@@ -425,7 +399,6 @@
                         let beamAttack = { element: beam, x: 0, y: beamY, width: canvasWidth, height: beamHeight, isBeam: true };
                         obstacles.push(beamAttack);
 
-                        // Bước 3: Duy trì vụ nổ và biến mất
                         setTimeout(() => {
                             beam.remove();
                             let idx = obstacles.indexOf(beamAttack);
@@ -436,7 +409,7 @@
                                 updatePhaseUI();
                             }
                         }, 600);
-                    }, 800); // Thời gian cột lửa tụ năng lượng sáng dần lên
+                    }, 800);
                 }, 50);
             }
         }
@@ -461,7 +434,7 @@
                 else { posX = edge === 2 ? -40 : canvasWidth + 10; posY = Math.random() * canvasHeight; spX = edge === 2 ? (Math.random() * 2 + 3) : -(Math.random() * 2 + 3); spY = Math.random() * 4 - 2; }
             } else if (score > 50 && score <= 75) {
                 obstacle.innerHTML = VISUAL_ASSETS.planets[Math.floor(Math.random() * VISUAL_ASSETS.planets.length)];
-                size = Math.floor(Math.random() * 20) + 65;
+                size = Math.floor(Math.random() * 20) + 60;
                 spX = -(Math.random() * 1.5 + 2);
             }
 
@@ -471,28 +444,23 @@
             obstacles.push({ element: obstacle, x: posX, y: posY, speedX: spX, speedY: spY, size: size });
         }
 
-        // --- SỰ KIỆN CHUYỂN CẢNH: HỐ ĐEN NUỐT CHỬNG VÀO DẢI NGÂN HÀ ---
         function startBlackHoleTransition() {
             isTransitioning = true;
             clearInterval(spawnInterval);
             clearInterval(sunAttackInterval);
             
-            // Xóa toàn bộ đạn lửa xung quanh
             obstacles.forEach(obs => obs.element.remove());
             obstacles = [];
 
-            // 1. Xuất hiện dòng chữ "VƯỢT QUA HỆ MẶT TRỜI"
             victoryAnnounce.style.display = 'flex';
 
-            // 2. Thu nhỏ Mặt Trời và làm mờ dần biến mất
             if (sunObject) {
                 sunObject.element.style.transition = 'all 2s ease';
                 sunObject.element.style.transform = 'scale(0)';
                 sunObject.element.style.opacity = '0';
-                setTimeout(() => { sunObject.element.remove(); sunObject = null; }, 2000);
+                setTimeout(() => { if(sunObject) sunObject.element.remove(); sunObject = null; }, 2000);
             }
 
-            // 3. Sau 2.5 giây, tắt dòng chữ và sinh ra Hố Đen khổng lồ ở giữa màn hình
             setTimeout(() => {
                 victoryAnnounce.style.opacity = '0';
                 setTimeout(() => victoryAnnounce.style.display = 'none', 500);
@@ -500,7 +468,7 @@
                 const bhDiv = document.createElement('div');
                 bhDiv.classList.add('obstacle', 'blackhole-glow');
                 bhDiv.innerHTML = VISUAL_ASSETS.blackhole;
-                let bhSize = 150;
+                let bhSize = Math.min(canvasHeight * 0.5, 150);
                 let bhX = (canvasWidth - bhSize) / 2;
                 let bhY = (canvasHeight - bhSize) / 2;
                 bhDiv.style.width = bhSize + 'px';
@@ -514,12 +482,10 @@
                 blackHoleObject = { element: bhDiv, x: bhX, y: bhY, size: bhSize };
                 setTimeout(() => bhDiv.style.opacity = '1', 50);
 
-                // 4. Kích hoạt lực hút của Hố Đen lên tàu vũ trụ
                 playerSpeedX = 0; playerSpeedY = 0; 
             }, 2500);
         }
 
-        // --- VÒNG LẶP GAME CHÍNH ---
         function updateGame() {
             if (isGameOver) return;
 
@@ -528,7 +494,6 @@
                 playerX += playerSpeedX;
                 playerY += playerSpeedY;
             } else if (blackHoleObject) {
-                // Thuật toán tự động hút tàu vũ trụ vào tâm hố đen không thể cưỡng lại
                 let pCenterX = playerX + playerSize / 2;
                 let pCenterY = playerY + playerSize / 2;
                 let bhCenterX = blackHoleObject.x + blackHoleObject.size / 2;
@@ -539,11 +504,10 @@
                 let dist = Math.sqrt(dx * dx + dy * dy);
 
                 if (dist > 3) {
-                    playerX += (dx / dist) * 2.5; // Tàu tự trôi về tâm hố đen
+                    playerX += (dx / dist) * 2.5;
                     playerY += (dy / dist) * 2.5;
                     player.style.transform = `rotate(${Math.atan2(dy, dx) * 180 / Math.PI + 90}deg)`;
                 } else {
-                    // Khi đã vào sát tâm hố đen -> Thực hiện xoáy và biến mất hẳn
                     blackHoleObject.element.style.transform = 'scale(1.5)';
                     player.style.width = '0px';
                     player.style.height = '0px';
@@ -551,11 +515,10 @@
                     
                     clearInterval(gameInterval);
                     
-                    // Bước 5: Chuyển sang Không gian Dải ngân hà thành công!
                     setTimeout(() => {
-                        document.body.style.background = '#090514'; // Thay đổi màu nền vũ trụ sâu thẳm
+                        document.body.style.background = '#090514';
                         canvas.style.background = 'radial-gradient(circle at center, #1e1b4b 0%, #090514 100%)';
-                        canvas.style.borderColor = '#a855f7'; // Đổi khung viền sang màu tím huyền ảo
+                        canvas.style.borderColor = '#a855f7';
                         phaseText.innerText = "DẢI NGÂN HÀ (THÀNH CÔNG!)";
                         phaseText.style.color = "#c084fc";
                         
@@ -606,7 +569,6 @@
                 }
             }
 
-            // Tăng điểm tự động khi sinh tồn ở chặng Boss Mặt Trời
             if (score > 75 && score < 100 && !isTransitioning) {
                 if (Math.random() < 0.009) { score++; scoreDisplay.innerText = score; updatePhaseUI(); }
             }
@@ -656,7 +618,7 @@
             score = 0;
             isGameOver = false;
             isTransitioning = false;
-            playerX = 50;
+            playerX = 30;
             playerY = (canvasHeight - playerSize) / 2;
             
             scoreDisplay.innerText = score;
@@ -674,10 +636,47 @@
             updatePhaseUI();
         }
 
-        window.addEventListener('resize', () => {
+        // TỰ ĐỘNG CHỈNH KHUNG HÌNH KHI THAY ĐỔI KÍCH THƯỚC CỬA SỔ / XOAY MÀN HÌNH
+        function handleResize() {
+            const oldWidth = canvasWidth;
+            const oldHeight = canvasHeight;
+
             canvasWidth = canvas.clientWidth;
             canvasHeight = canvas.clientHeight;
-        });
+
+            // Giữ vị trí tàu vũ trụ không bị lọt ra ngoài khi co giãn màn hình
+            if (oldWidth && oldHeight) {
+                playerX = (playerX / oldWidth) * canvasWidth;
+                playerY = (playerY / oldHeight) * canvasHeight;
+            }
+
+            // Cập nhật vị trí Mặt trời Boss nếu đang tồn tại
+            if (sunObject) {
+                const size = Math.min(canvasHeight * 0.6, 180);
+                sunObject.size = size;
+                sunObject.x = canvasWidth - size - 10;
+                sunObject.y = (canvasHeight - size) / 2;
+                sunObject.element.style.width = size + 'px';
+                sunObject.element.style.height = size + 'px';
+                sunObject.element.style.left = sunObject.x + 'px';
+                sunObject.element.style.top = sunObject.y + 'px';
+            }
+
+            // Cập nhật vị trí Hố đen nếu đang tồn tại
+            if (blackHoleObject) {
+                let bhSize = Math.min(canvasHeight * 0.5, 150);
+                blackHoleObject.size = bhSize;
+                blackHoleObject.x = (canvasWidth - bhSize) / 2;
+                blackHoleObject.y = (canvasHeight - bhSize) / 2;
+                blackHoleObject.element.style.width = bhSize + 'px';
+                blackHoleObject.element.style.height = bhSize + 'px';
+                blackHoleObject.element.style.left = blackHoleObject.x + 'px';
+                blackHoleObject.element.style.top = blackHoleObject.y + 'px';
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', () => setTimeout(handleResize, 200));
 
         startGame();
     </script>
