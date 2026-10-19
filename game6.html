@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Show: Vua Tiếng Việt</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #1a0933 0%, #0a0314 100%);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+        .game-card {
+            width: 100%;
+            max-width: 850px;
+            background: rgba(30, 15, 60, 0.9);
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            position: relative;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 1.6rem;
+            color: #ffd700;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat-badge {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid #ffd700;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .timer-box {
+            font-size: 1.5rem;
+            color: #ff4d4d;
+            font-weight: bold;
+            background: #2a0808;
+            border: 1px solid #ff4d4d;
+            padding: 5px 15px;
+            border-radius: 10px;
+        }
+        .screen {
+            display: none;
+            text-align: center;
+        }
+        .screen.active {
+            display: block;
+        }
+        .question-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed #ff9900;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            font-size: 1.5rem;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+        .answer-feedback {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: none;
+        }
+        .answer-feedback.correct {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+            color: #55efc4;
+        }
+        .answer-feedback.wrong {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            color: #ff7675;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            border: 2px solid #ffd700;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            outline: none;
+            text-align: center;
+        }
+        input[type="text"]:focus {
+            box-shadow: 0 0 10px #ffd700;
+        }
+        .btn {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border: none;
+            color: #000;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+        .btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #ffea00, #ffa500);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .bell-btn {
+            background: linear-gradient(135deg, #ff4d4d, #cc0000);
+            color: #fff;
+            font-size: 1.4rem;
+            padding: 20px 40px;
+            border-radius: 50px;
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.6);
+            margin: 15px auto;
+            display: block;
+        }
+        .desc-text {
+            font-size: 1.1rem;
+            color: #d1d1d1;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .hint-text {
+            color: #ffcc00;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-card">
+        <div class="top-bar">
+            <div class="title">👑 VUA TIẾNG VIỆT</div>
+            <div class="stat-badge" id="round-title">Trang chủ</div>
+            <div class="stat-badge" id="score-display">Điểm: 0</div>
+            <div class="timer-box" id="timer">⏱️ 00s</div>
+        </div>
+
+        <!-- MÀN HÌNH 0: TRANG CHỦ -->
+        <div id="screen-start" class="screen active">
+            <h1 style="color: #ffd700; margin-bottom: 15px;">CHÀO MỪNG BẠN ĐẾN VỚI VUA TIẾNG VIỆT</h1>
+            <p class="desc-text">Hãy vượt qua 4 vòng chơi đầy thử thách để chinh phục Ngai Vàng Tiếng Việt!</p>
+            <div style="text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin: 20px 0;">
+                <p>🔹 <strong>Vòng 1: Phản Xạ</strong> (90s - Sửa chính tả & ghép từ)</p>
+                <p>🔹 <strong>Vòng 2: Giải Nghĩa</strong> (Đoán từ qua mô tả)</p>
+                <p>🔹 <strong>Vòng 3: Xâu Chuỗi</strong> (Nhấn chuông ghép câu hoàn chỉnh)</p>
+                <p>🔹 <strong>Vòng 4: Soán Ngôi</strong> (Đấu kịch tính với Trùm Giữ Ngai)</p>
+            </div>
+            <button class="btn" onclick="startRound1()">BẮT ĐẦU CHƠI</button>
+        </div>
+
+        <!-- MÀN HÌNH GAMEPLAY CHUNG -->
+        <div id="screen-gameplay" class="screen">
+            <div class="hint-text" id="game-hint">Gợi ý câu hỏi</div>
+            <div class="question-box" id="question-text">Nội dung câu hỏi...</div>
+            
+            <!-- Vùng hiển thị kết quả đúng/sai ngay sau khi gõ -->
+            <div class="answer-feedback" id="feedback-box"></div>
+
+            <button class="btn bell-btn" id="bell-btn" style="display:none;" onclick="ringBell()">🔔 NHẤN CHUÔNG GIÀNH QUYỀN!</button>
+
+            <div class="input-group" id="input-area">
+                <input type="text" id="user-input" placeholder="Nhập câu trả lời của bạn..." autocomplete="off">
+                <button class="btn" id="submit-btn" onclick="submitAnswer()">GỬI</button>
+            </div>
+        </div>
+
+        <!-- MÀN HÌNH VÒNG 4 -->
+        <div id="screen-round4" class="screen">
+            <h2 style="color: #ffd700; margin-bottom: 10px;">VÒNG 4: SOÁN NGÔI</h2>
+            <p class="desc-text">Bạn phải vượt qua Trùm Giữ Ngai bằng bài thử thách sáng tác thơ!</p>
+            <div class="question-box" id="r4-task">Yêu cầu...</div>
+            <textarea id="r4-poem-input" rows="4" style="width:100%; border-radius:15px; padding:15px; font-size:1.1rem; border:2px solid #ffd700; background:rgba(0,0,0,0.5); color:#fff; margin-bottom:15px;" placeholder="Nhập bài thơ của bạn tại đây..."></textarea>
+            <button class="btn" onclick="submitRound4()">GỬI BÀI THƠ CHINH PHỤC NGAI VÀNG</button>
+        </div>
+
+        <!-- MÀN HÌNH KẾT THÚC -->
+        <div id="screen-result" class="screen">
+            <h1 id="result-title" style="color: #ffd700; margin-bottom: 15px;">KẾT QUẢ</h1>
+            <p class="desc-text" id="result-msg">Thông báo...</p>
+            <div id="reward-option" style="display:none; margin: 20px 0;">
+                <button class="btn" onclick="claimReward(false)" style="background: #28a745; color:#fff; margin-right:10px;">💰 NHẬN TIỀN THƯỞNG & DỪNG LẠI</button>
+                <button class="btn" onclick="claimReward(true)">👑 GIỮ NGAI VÀNG (NHÂN ĐÔI THƯỞNG TUẦN SAU)</button>
+            </div>
+            <br>
+            <button class="btn" onclick="location.reload()" style="margin-top:15px;">CHƠI LẠI TỪ ĐẦU</button>
+        </div>
+    </div>
+
+    <script>
+        // --- KHO CÂU HỎI MỞ RỘNG ĐA DẠNG ---
+        const database = {
+    // --- VÒNG 1: PHẢN XẠ (25 CÂU) ---
+    round1: [
+        { type: 'scramble', word: 'TRANG TRỌNG', scrambled: 'T R N A G T R Ọ N G' },
+        { type: 'spelling', word: 'SUÔN SẺ', wrong: 'XUÔN XẺ', hint: 'Sửa lỗi chính tả:' },
+        { type: 'fill', sentence: 'Đi một ngày đàng, học một ___ khôn', answer: 'SÀNG' },
+        { type: 'scramble', word: 'LỄ PHÉP', scrambled: 'P H É P L Ễ' },
+        { type: 'spelling', word: 'XUẤT SẮC', wrong: 'SUẤT SẮC', hint: 'Sửa lỗi chính tả:' },
+        { type: 'fill', sentence: 'Ăn quả nhớ kẻ ___ cây', answer: 'TRỒNG' },
+        { type: 'scramble', word: 'DŨNG CẢM', scrambled: 'C Ả M D Ũ N G' },
+        { type: 'spelling', word: 'XƠ XÁC', wrong: 'SƠ SÁC', hint: 'Sửa lỗi chính tả:' },
+        { type: 'fill', sentence: 'Bầu ơi thương lấy bí cùng, tuy rằng khác ___ nhưng chung một giàn', answer: 'GIỐNG' },
+        { type: 'scramble', word: 'KHIÊM TỐN', scrambled: 'T Ố N K H I Ê M' },
+        { type: 'spelling', word: 'SẢN XUẤT', wrong: 'XẢN SUẤT', hint: 'Sửa lỗi chính tả:' },
+        { type: 'fill', sentence: 'Uống nước nhớ ___', answer: 'NGUỒN' },
+        { type: 'scramble', word: 'HẠNH PHÚC', scrambled: 'P H Ú C H Ạ N H' },
+        { type: 'scramble', word: 'SÁNG TẠO', scrambled: 'T Ạ O S Á N G' },
+        { type: 'scramble', word: 'KIÊN TRÌ', scrambled: 'T R Ì K I Ê N' },
+        { type: 'spelling', word: 'CHÍN CHẮN', wrong: 'CHÍNH CHẮN', hint: 'Sửa lỗi chính tả:' },
+        { type: 'spelling', word: 'CHẦN CHỪ', wrong: 'TRẦN TRỪ', hint: 'Sửa lỗi chính tả:' },
+        { type: 'spelling', word: 'CỌ XÁT', wrong: 'CỌ SÁT', hint: 'Sửa lỗi chính tả:' },
+        { type: 'spelling', word: 'BÀNG HOÀNG', wrong: 'BÀN HOÀNG', hint: 'Sửa lỗi chính tả:' },
+        { type: 'spelling', word: 'DÀN DỰNG', wrong: 'GIÀN DỰNG', hint: 'Sửa lỗi chính tả:' },
+        { type: 'fill', sentence: 'Gần mực thì đen, gần đèn thì ___', answer: 'SÁNG' },
+        { type: 'fill', sentence: 'Có công mài sắt, có ngày nên ___', answer: 'KIM' },
+        { type: 'fill', sentence: 'Lá lành đùm lá ___', answer: 'RÁCH' },
+        { type: 'fill', sentence: 'Tốt gỗ hơn tốt nước ___', answer: 'SƠN' },
+        { type: 'fill', sentence: 'Có nuôi con mới biết ___ cha mẹ', answer: 'LÒNG' }
+    ],
+
+    // --- VÒNG 2: GIẢI NGHĨA (25 CÂU) ---
+    round2: [
+        { desc: "Từ gồm 2 tiếng: Chỉ cảm xúc vui vẻ, tự hào khi thành công lớn.", answer: "HÂN HOAN" },
+        { desc: "Từ gồm 2 tiếng: Chỉ tính cách kiên định, không lùi bước trước khó khăn.", answer: "KIÊN CƯỜNG" },
+        { desc: "Thành ngữ 4 tiếng: Chỉ tình cảm gắn bó thắm thiết khi gặp khó khăn.", answer: "HOẠN NẠN CÓ NHAU" },
+        { desc: "Từ gồm 2 tiếng: Tự nguyện hy sinh lợi ích bản thân vì mục tiêu cao cả.", answer: "CỐNG HIẾN" },
+        { desc: "Từ gồm 2 tiếng: Vẻ đẹp nhẹ nhàng, thanh thoát của người phụ nữ.", answer: "DUYÊN DÁNG" },
+        { desc: "Từ gồm 2 tiếng: Chỉ sự không thay đổi trước sau như một trong tình cảm.", answer: "CHUNG THỦY" },
+        { desc: "Từ gồm 2 tiếng: Thái độ nghiêm túc, chú ý lắng nghe để tiến bộ.", answer: "CẦU THỊ" },
+        { desc: "Thành ngữ 4 tiếng: Chỉ hành động ăn ở bội bạc, quên ơn người giúp mình.", answer: "ĂN CHÁO ĐÁ BÁT" },
+        { desc: "Từ gồm 2 tiếng: Trạng thái tinh thần thoải mái, không lo nghĩ.", answer: "AN NHIÊN" },
+        { desc: "Từ gồm 2 tiếng: Hành động giúp đỡ người khó khăn một cách tự nguyện.", answer: "TỪ THIỆN" },
+        { desc: "Từ gồm 2 tiếng: Sự hiểu biết sâu sắc để đưa ra quyết định đúng.", answer: "SÁNG SUỐT" },
+        { desc: "Thành ngữ 4 tiếng: Diễn tả việc làm ăn gặp nhiều may mắn, thuận lợi.", answer: "XUÔI CHÈO MÁT MÁI" },
+        { desc: "Từ gồm 2 tiếng: Chỉ hành động tỏ ý coi thường, không thèm đếm xỉa.", answer: "KHINH KHỈNH" },
+        { desc: "Từ gồm 2 tiếng: Chỉ sự lo lắng, đứng ngồi không yên trước việc lớn.", answer: "BỒN CHỒN" },
+        { desc: "Thành ngữ 4 tiếng: Chỉ người hiểu biết hạn hẹp nhưng huênh hoang.", answer: "ẾCH NGỒI ĐÁY GIẾNG" },
+        { desc: "Từ gồm 2 tiếng: Phẩm chất trung thực, thật thà, không gian lận.", answer: "LIÊM CHÍNH" },
+        { desc: "Từ gồm 2 tiếng: Thời tiết mờ ảo do hạt nước nhỏ tụ lại gần mặt đất.", answer: "SƯƠNG MÙ" },
+        { desc: "Từ gồm 2 tiếng: Sự truyền lại kiến thức hoặc tài sản cho thế hệ sau.", answer: "KẾ THỪA" },
+        { desc: "Thành ngữ 4 tiếng: Diễn tả việc lặp lại một hành động vô ích.", answer: "DÃ TRÀNG XE CÁT" },
+        { desc: "Từ gồm 2 tiếng: Tính cách hay lam hay làm, không ngại khó khổ.", answer: "CHĂM CHỈ" },
+        { desc: "Từ gồm 2 tiếng: Thái độ coi trọng, giữ gìn danh dự của bản thân.", answer: "TỰ TRỌNG" },
+        { desc: "Thành ngữ 4 tiếng: Đòi hỏi sự hoàn hảo không một vết xước.", answer: "MƯỜI PHÂN VẸN MƯỜI" },
+        { desc: "Từ gồm 2 tiếng: Sự đồng lòng, cùng nhìn về một hướng của tập thể.", answer: "ĐOÀN KẾT" },
+        { desc: "Từ gồm 2 tiếng: Trạng thái yên bình, không có chiến tranh hay xáo trộn.", answer: "HOÀ BÌNH" },
+        { desc: "Thành ngữ 4 tiếng: Chỉ sự kiên trì, không quản ngại vất vả gian lao.", answer: "CẦN CÙ BÙ THÔNG MINH" }
+    ],
+
+    // --- VÒNG 3: XÂU CHUỖI (25 CÂU) ---
+    round3: [
+        { scrambled: "Thái Sơn / công cha / như / núi", correct: "công cha như núi thái sơn" },
+        { scrambled: "nước / nguồn / chảy / ra / như / nghĩa mẹ", correct: "nghĩa mẹ như nước trong nguồn chảy ra" },
+        { scrambled: "lành / bọc / rách / lá / lá", correct: "lá lành bọc lá rách" },
+        { scrambled: "gần đèn / gần mực / thì sáng / thì đen", correct: "gần mực thì đen gần đèn thì sáng" },
+        { scrambled: "hơn / áo rộng / nhà rộng / tình nghĩa", correct: "nhà rộng không bằng tình nghĩa rộng" },
+        { scrambled: "bão táp / bằng / ngữ pháp / không / Việt Nam / phong ba", correct: "phong ba bão táp không bằng ngữ pháp việt nam" },
+        { scrambled: "thì nên / có chí / có công", correct: "có công mài sắt có ngày nên kim" },
+        { scrambled: "không / làm nên / một cây / ba cây / chụm lại / hòn núi cao / nên", correct: "một cây làm chẳng nên non ba cây chụm lại nên hòn núi cao" },
+        { scrambled: "chết trong / sống đục / còn hơn", correct: "chết trong còn hơn sống đục" },
+        { scrambled: "học / học nữa / học / mãi", correct: "học học nữa học mãi" },
+        { scrambled: "con / có cha / như / nhà / có nóc", correct: "con có cha như nhà có nóc" },
+        { scrambled: "bể đông / tát / đồng lòng / cạn / tát / thuận vợ thuận chồng / cũng", correct: "thuận vợ thuận chồng tát bể đông cũng cạn" },
+        { scrambled: "uống nước / người trồng cây / nhớ nguồn / ăn quả / nhớ", correct: "ăn quả nhớ kẻ trồng cây uống nước nhớ nguồn" },
+        { scrambled: "hơn / một giọt máu đào / ao nước lã / còn", correct: "một giọt máu đào hơn ao nước lã" },
+        { scrambled: "vạn sự / nan / khởi đầu", correct: "vạn sự khởi đầu nan" },
+        { scrambled: "tấc vàng / một tấc đất / bằng", correct: "tấc đất tấc vàng" },
+        { scrambled: "chớ thấy / sóng cả / ngã tay chèo / mà", correct: "chớ thấy sóng cả mà ngã tay chèo" },
+        { scrambled: "mật ngọt / chết ruồi", correct: "mật ngọt chết ruồi" },
+        { scrambled: "thương nhau / củ ấu / củ ấu cũng tròn / ghét nhau / củ bồ hòn / méo", correct: "thương nhau củ ấu cũng tròn ghét nhau củ bồ hòn cũng méo" },
+        { scrambled: "đói / cho sạch / cho thơm / rách", correct: "đói cho sạch rách cho thơm" },
+        { scrambled: "gà cùng một mẹ / hoài / đá nhau / chớ", correct: "gà cùng một mẹ chớ hoài đá nhau" },
+        { scrambled: "chậm / mà chắc", correct: "chậm mà chắc" },
+        { scrambled: "tiên học lễ / hậu học văn", correct: "tiên học lễ hậu học văn" },
+        { scrambled: "chim có tổ / có tông / người / như", correct: "chim có tổ người có tông" },
+        { scrambled: "bể khổ / quay đầu / vô biên / là bờ", correct: "bể khổ vô biên quay đầu là bờ" }
+    ],
+
+    // --- VÒNG 4: SOÁN NGÔI (25 CÂU) ---
+    round4: [
+        { keywords: ["NƯỚC", "VIỆT", "NAM"], task: "Sáng tác một bài thơ 4 câu chứa 3 từ khóa: NƯỚC, VIỆT, NAM." },
+        { keywords: ["MẸ", "YÊU", "THƯƠNG"], task: "Sáng tác một bài thơ 4 câu chứa 3 từ khóa: MẸ, YÊU, THƯƠNG." },
+        { keywords: ["HOA", "HỒNG", "TẶNG"], task: "Sáng tác một bài thơ 4 câu chứa 3 từ khóa: HOA, HỒNG, TẶNG." },
+        { keywords: ["QUÊ", "HƯƠNG", "THANH BÌNH"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: QUÊ, HƯƠNG, THANH BÌNH." },
+        { keywords: ["THẦY", "CÔ", "ƠN NGHĨA"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: THẦY, CÔ, ƠN NGHĨA." },
+        { keywords: ["BẠN BÈ", "KỶ NIỆM", "TRƯỜNG"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: BẠN BÈ, KỶ NIỆM, TRƯỜNG." },
+        { keywords: ["TRĂNG", "ĐÊM", "SÁNG"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: TRĂNG, ĐÊM, SÁNG." },
+        { keywords: ["BIỂN", "CÁT", "TRỜI"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: BIỂN, CÁT, TRỜI." },
+        { keywords: ["MƯA", "LẠNH", "PHỐ"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: MƯA, LẠNH, PHỐ." },
+        { keywords: ["HOA MAI", "TẾT", "XUÂN"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: HOA MAI, TẾT, XUÂN." },
+        { keywords: ["SÁCH", "ĐÈN", "HỌC"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: SÁCH, ĐÈN, HỌC." },
+        { keywords: ["CƠM", "CHA", "GIA ĐÌNH"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: CƠM, CHA, GIA ĐÌNH." },
+        { keywords: ["NẮNG", "HÈ", "HOA PHƯỢNG"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: NẮNG, HÈ, HOA PHƯỢNG." },
+        { keywords: ["GIÓ", "THU", "LÁ VÀNG"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: GIÓ, THU, LÁ VÀNG." },
+        { keywords: ["ƯỚC MƠ", "TƯƠNG LAI", "BAY"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: ƯỚC MƠ, TƯƠNG LAI, BAY." },
+        { keywords: ["NÚI", "RỪNG", "BÀN TAY"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: NÚI, RỪNG, BÀN TAY." },
+        { keywords: ["SÔNG", "DÒNG", "XANH"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: SÔNG, DÒNG, XANH." },
+        { keywords: ["MÂY", "BAY", "GÓC TRỜI"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: MÂY, BAY, GÓC TRỜI." },
+        { keywords: ["CÁNH ĐỒNG", "LÚA", "VÀNG"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: CÁNH ĐỒNG, LÚA, VÀNG." },
+        { keywords: ["NỤ CƯỜI", "ÁNH MẮT", "VUI"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: NỤ CƯỜI, ÁNH MẮT, VUI." },
+        { keywords: ["CON ĐƯỜNG", "TUỔI THƠ", "BẰNG PHẲNG"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: CON ĐƯỜNG, TUỔI THƠ, BẰNG PHẲNG." },
+        { keywords: ["CÂY", "LÁ", "MẦM XANH"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: CÂY, LÁ, MẦM XANH." },
+        { keywords: ["THỜI GIAN", "TRÔI", "TIẾC NUỐI"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: THỜI GIAN, TRÔI, TIẾC NUỐI." },
+        { keywords: ["LỜI RU", "VÕNG", "TRƯA"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: LỜI RU, VÕNG, TRƯA." },
+        { keywords: ["KHÁT VỌNG", "CHINH PHỤC", "ĐỈNH CAO"], task: "Sáng tác một bài thơ 4 câu chứa các từ khóa: KHÁT VỌNG, CHINH PHỤC, ĐỈNH CAO." }
+    ]
+};
+
+        // --- TRẠNG THÁI GAME ---
+        let currentRound = 0;
+        let score = 0;
+        let timer = null;
+        let timeLeft = 0;
+        
+        let r1Questions = [];
+        let r2Questions = [];
+        let r3Questions = [];
+        
+        let r1Index = 0;
+        let r2Index = 0;
+        let r3Index = 0;
+
+        // Hàm xáo trộn mảng ngẫu nhiên (Fisher-Yates)
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function normalizeStr(str) {
+            return str.trim().toLowerCase().replace(/\s+/g, ' ').replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "");
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function updateHeader(roundName) {
+            document.getElementById('round-title').innerText = roundName;
+            document.getElementById('score-display').innerText = `Điểm: ${score}`;
+        }
+
+        function stopTimer() {
+            if (timer) clearInterval(timer);
+            document.getElementById('timer').innerText = '⏱️ 00s';
+        }
+
+        function showFeedback(isCorrect, message) {
+            const fbBox = document.getElementById('feedback-box');
+            fbBox.style.display = 'block';
+            fbBox.className = `answer-feedback ${isCorrect ? 'correct' : 'wrong'}`;
+            fbBox.innerHTML = message;
+        }
+
+        function clearFeedback() {
+            const fbBox = document.getElementById('feedback-box');
+            fbBox.style.display = 'none';
+            fbBox.innerHTML = '';
+        }
+
+        // ================= VÒNG 1: PHẢN XẠ =================
+        function startRound1() {
+            currentRound = 1;
+            score = 0;
+            r1Index = 0;
+            // Xáo trộn danh sách câu hỏi để không bao giờ bị trùng thứ tự
+            r1Questions = shuffleArray(database.round1);
+            
+            updateHeader("Vòng 1: Phản Xạ");
+            showScreen('screen-gameplay');
+            document.getElementById('bell-btn').style.display = 'none';
+            document.getElementById('input-area').style.display = 'flex';
+
+            timeLeft = 90;
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = `⏱️ ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    stopTimer();
+                    endRound1();
+                }
+            }, 1000);
+
+            nextR1Question();
+        }
+
+        function nextR1Question() {
+            clearFeedback();
+            document.getElementById('submit-btn').disabled = false;
+            
+            if (r1Index >= r1Questions.length) {
+                stopTimer();
+                endRound1();
+                return;
+            }
+            let q = r1Questions[r1Index];
+            if (q.type === 'scramble') {
+                document.getElementById('game-hint').innerText = "Ghép các chữ cái sau thành từ có nghĩa:";
+                document.getElementById('question-text').innerText = q.scrambled;
+            } else if (q.type === 'spelling') {
+                document.getElementById('game-hint').innerText = q.hint;
+                document.getElementById('question-text').innerText = q.wrong;
+            } else if (q.type === 'fill') {
+                document.getElementById('game-hint').innerText = "Điền từ còn thiếu vào chỗ trống:";
+                document.getElementById('question-text').innerText = q.sentence;
+            }
+            document.getElementById('user-input').value = '';
+            document.getElementById('user-input').focus();
+        }
+
+        function checkR1Answer() {
+            let userAns = normalizeStr(document.getElementById('user-input').value);
+            let q = r1Questions[r1Index];
+            let target = normalizeStr(q.word || q.answer);
+
+            document.getElementById('submit-btn').disabled = true;
+
+            if (userAns === target) {
+                score++;
+                updateHeader("Vòng 1: Phản Xạ");
+                showFeedback(true, `✓ Chính xác! Đáp án đúng là: <strong>${(q.word || q.answer).toUpperCase()}</strong>`);
+            } else {
+                showFeedback(false, `✗ Chưa đúng! Đáp án đúng chuẩn là: <strong>${(q.word || q.answer).toUpperCase()}</strong>`);
+            }
+
+            // Tự động chuyển câu sau 1.2 giây
+            setTimeout(() => {
+                r1Index++;
+                nextR1Question();
+            }, 1200);
+        }
+
+        function endRound1() {
+            alert(`Hết Vòng 1! Bạn đạt được ${score} điểm.`);
+            startRound2();
+        }
+
+        // ================= VÒNG 2: GIẢI NGHĨA =================
+        function startRound2() {
+            currentRound = 2;
+            r2Index = 0;
+            r2Questions = shuffleArray(database.round2).slice(0, 3); // Lấy ngẫu nhiên 3 câu không trùng
+            
+            updateHeader("Vòng 2: Giải Nghĩa");
+            showScreen('screen-gameplay');
+            
+            document.getElementById('input-area').style.display = 'none';
+            document.getElementById('bell-btn').style.display = 'block';
+            
+            nextR2Question();
+        }
+
+        function nextR2Question() {
+            clearFeedback();
+            document.getElementById('submit-btn').disabled = false;
+
+            if (r2Index >= r2Questions.length) {
+                alert(`Kết thúc Vòng 2! Tổng điểm hiện tại: ${score}`);
+                startRound3();
+                return;
+            }
+            document.getElementById('bell-btn').style.display = 'block';
+            document.getElementById('input-area').style.display = 'none';
+            document.getElementById('game-hint').innerText = "Lắng nghe mô tả từ 'Người giải nghĩa' hệ thống:";
+            document.getElementById('question-text').innerText = r2Questions[r2Index].desc;
+            document.getElementById('user-input').value = '';
+        }
+
+        function ringBell() {
+            document.getElementById('bell-btn').style.display = 'none';
+            document.getElementById('input-area').style.display = 'flex';
+            document.getElementById('user-input').focus();
+            
+            timeLeft = 15;
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = `⏱️ ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    stopTimer();
+                    showFeedback(false, `⏱️ Hết giờ! Đáp án đúng là: <strong>${r2Questions[r2Index].answer.toUpperCase()}</strong>`);
+                    setTimeout(() => {
+                        r2Index++;
+                        nextR2Question();
+                    }, 1500);
+                }
+            }, 1000);
+        }
+
+        function checkR2Answer() {
+            stopTimer();
+            let userAns = normalizeStr(document.getElementById('user-input').value);
+            let target = normalizeStr(r2Questions[r2Index].answer);
+
+            document.getElementById('submit-btn').disabled = true;
+
+            if (userAns === target) {
+                score += 2;
+                updateHeader("Vòng 2: Giải Nghĩa");
+                showFeedback(true, `✓ Chính xác! Đáp án đúng là: <strong>${r2Questions[r2Index].answer.toUpperCase()}</strong> (+2 điểm)`);
+            } else {
+                showFeedback(false, `✗ Chưa đúng! Đáp án đúng chuẩn là: <strong>${r2Questions[r2Index].answer.toUpperCase()}</strong>`);
+            }
+
+            setTimeout(() => {
+                r2Index++;
+                nextR2Question();
+            }, 1500);
+        }
+
+        // ================= VÒNG 3: XÂU CHUỖI =================
+        function startRound3() {
+            currentRound = 3;
+            r3Index = 0;
+            r3Questions = shuffleArray(database.round3).slice(0, 3);
+            
+            updateHeader("Vòng 3: Xâu Chuỗi");
+            showScreen('screen-gameplay');
+            nextR3Question();
+        }
+
+        function nextR3Question() {
+            clearFeedback();
+            document.getElementById('submit-btn').disabled = false;
+
+            if (r3Index >= r3Questions.length) {
+                alert(`Chúc mừng! Bạn đã xuất sắc bước vào Vòng Chung Kết!`);
+                startRound4();
+                return;
+            }
+            document.getElementById('bell-btn').style.display = 'block';
+            document.getElementById('input-area').style.display = 'none';
+            document.getElementById('game-hint').innerText = "Sắp xếp lại các từ xáo trộn thành câu hoàn chỉnh:";
+            document.getElementById('question-text').innerText = r3Questions[r3Index].scrambled;
+            document.getElementById('user-input').value = '';
+        }
+
+        function checkR3Answer() {
+            stopTimer();
+            let userAns = normalizeStr(document.getElementById('user-input').value);
+            let target = normalizeStr(r3Questions[r3Index].correct);
+
+            document.getElementById('submit-btn').disabled = true;
+
+            if (userAns === target) {
+                score += 3;
+                updateHeader("Vòng 3: Xâu Chuỗi");
+                showFeedback(true, `✓ Ghép câu hoàn hảo! Đáp án: <strong>"${r3Questions[r3Index].correct.toUpperCase()}"</strong> (+3 điểm)`);
+            } else {
+                showFeedback(false, `✗ Chưa đúng! Câu chuẩn là: <strong>"${r3Questions[r3Index].correct.toUpperCase()}"</strong>`);
+            }
+
+            setTimeout(() => {
+                r3Index++;
+                nextR3Question();
+            }, 1800);
+        }
+
+        // ================= VÒNG 4: SOÁN NGÔI =================
+        function startRound4() {
+            currentRound = 4;
+            updateHeader("Vòng 4: Soán Ngôi");
+            showScreen('screen-round4');
+
+            // Chọn ngẫu nhiên 1 đề bài vòng 4
+            let r4Data = shuffleArray(database.round4)[0];
+            window.currentR4Data = r4Data;
+
+            document.getElementById('r4-task').innerText = r4Data.task;
+            
+            timeLeft = 60;
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = `⏱️ ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    stopTimer();
+                    alert("Hết giờ làm thơ!");
+                    submitRound4();
+                }
+            }, 1000);
+        }
+
+        function submitRound4() {
+            stopTimer();
+            let poem = normalizeStr(document.getElementById('r4-poem-input').value);
+            let keywords = window.currentR4Data.keywords;
+            
+            let hasAllKeywords = keywords.every(kw => poem.includes(normalizeStr(kw)));
+
+            showScreen('screen-result');
+            if (hasAllKeywords && poem.length > 20) {
+                score += 10;
+                updateHeader("Vua Tiếng Việt");
+                document.getElementById('result-title').innerText = "👑 BẠN ĐÃ TÂN VƯƠNG VUA TIẾNG VIỆT!";
+                document.getElementById('result-msg').innerText = `Bài thơ của bạn rất xuất sắc và chứa đủ các từ khóa bắt buộc (${keywords.join(', ')})! Tổng điểm: ${score}`;
+                document.getElementById('reward-option').style.display = 'block';
+            } else {
+                document.getElementById('result-title').innerText = "💥 THẤT BẠI SOÁN NGÔI!";
+                document.getElementById('result-msg').innerText = `Bài thơ của bạn chưa đạt yêu cầu hoặc thiếu các từ khóa bắt buộc (${keywords.join(', ')}). Trùm Giữ Ngai bảo vệ thành công ngai vàng!`;
+                document.getElementById('reward-option').style.display = 'none';
+            }
+        }
+
+        function claimReward(keepCrown) {
+            if (keepCrown) {
+                alert(`Bạn đã chọn GIỮ NGAI VÀNG! Điểm số ${score} sẽ được nhân đôi vào tuần sau!`);
+            } else {
+                alert(`Bạn đã nhận phần thưởng tiền thưởng tương ứng với ${score} điểm và rút lui an toàn!`);
+            }
+            location.reload();
+        }
+
+        function submitAnswer() {
+            if (currentRound === 1) checkR1Answer();
+            else if (currentRound === 2) checkR2Answer();
+            else if (currentRound === 3) checkR3Answer();
+        }
+
+        document.getElementById('user-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                submitAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
